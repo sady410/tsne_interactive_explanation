@@ -164,54 +164,27 @@ class CustomTSNE:
         self.sigma = sigma       
 
         return Y, P, Q, sigma
-    
-    def plot_tsne_embedding_labels(self, title=""):
-        if self.Y is None:
-            print("No data to plot.")
-            return
-        df = pd.DataFrame()
-        # df["y"] = df.iloc[: , -1].to_list()
-        df["comp-1"] = self.Y[:,0]
-        df["comp-2"] = self.Y[:,1]
-        df["countries"] = self.targets
 
-        fig = px.scatter(df, x="comp-1", y="comp-2", text="countries")
-        
-        fig.update_traces(textposition='top center')
-        
-        fig.update_layout(
-            # height=1000,
-            # width=1000,
-            yaxis_title=None,
-            xaxis_title=None,
-            font=dict(size=10),
-            xaxis=dict(tickfont=dict(size=20), ticks="outside", showgrid=False, zeroline=False, mirror=True),
-            yaxis=dict(tickfont=dict(size=20), ticks="outside", showgrid=False, zeroline=False, mirror=True),
-            template="simple_white"
-        )
-
-        return fig
-
-    def plot_tsne_embedding_classification(self, title=""):
+    def plot_tsne_embedding(self):
         if self.Y is None:
             print("No data to plot.")
             return
         df = pd.DataFrame()
         df["id"] = np.array([i for i in range(self.X.shape[0])])
-        df["class"] = self.targets
+        df["class"] = np.array([str(i) for i in self.targets])
         df["comp-1"] = self.Y[:,0]
         df["comp-2"] = self.Y[:,1]
 
-        fig = px.scatter(df, x="comp-1", y="comp-2", color="class", symbol="class", hover_data=["id"])
+        fig = px.scatter(df, x="comp-1", y="comp-2", color="class", hover_data=["id"])
 
         fig.update_layout(
-            # height=1000,
-            # width=1000,
+            showlegend=False,
             yaxis_title=None,
             xaxis_title=None,
-            font=dict(size=10),
-            xaxis=dict(tickfont=dict(size=20), ticks="outside", showgrid=False, zeroline=False, mirror=True),
-            yaxis=dict(tickfont=dict(size=20), ticks="outside", showgrid=False, zeroline=False, mirror=True),
+            font=dict(size=5),
+            xaxis=dict(tickfont=dict(size=5), ticks="outside", showgrid=False, zeroline=False, mirror=True),
+            yaxis=dict(tickfont=dict(size=5), ticks="outside", showgrid=False, zeroline=False, mirror=True),
+            margin=dict(l=2, r=2, t=2, b=2),
             template="simple_white"
         )
 

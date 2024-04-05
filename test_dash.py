@@ -37,14 +37,14 @@ app.layout = dbc.Container([
         dbc.Col([
             tsne_param_component,
             overview_card
-        ], width=3),
+        ], width=3, style={"display": "flex", "flex-direction": "column", "height": "100vh"}),
         dbc.Col([
             scatter_plot_card
         ], width=6),
         dbc.Col([
             features_ranking_card
         ], width=3)
-    ], className="h-75"),
+    ], style={"display": "flex"}),
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -54,8 +54,9 @@ app.layout = dbc.Container([
                 ])
             ])
         ], width=12)
-    ], className="h-25")
-])
+    ])
+], className="mt-1")
+
 
 #########################################################
 #################  CALLBACKS  ###########################
@@ -66,8 +67,8 @@ app.layout = dbc.Container([
     Output('tsne-data', 'data'),
     [Input('run-tsne-button', 'n_clicks')],
     [State('dataset-dropdown', 'value')],
-    [State('perplexity-slider', 'value')],
-    [State('max-iterations-slider', 'value')]
+    [State('perplexity-input', 'value')],
+    [State('max-iterations-input', 'value')]
 )
 def run_tsne(n_clicks, selected_datasets, perplexity, max_iter):
     if n_clicks > 0:
@@ -89,7 +90,7 @@ def run_tsne(n_clicks, selected_datasets, perplexity, max_iter):
         Q_list = Q.tolist()
         sigma_list = sigma.tolist()
 
-        fig = tsne.plot_tsne_embedding_classification()
+        fig = tsne.plot_tsne_embedding()
  
         return json.dumps({'X' : X_list, 'labels' : targets, 'feature_names' : feature_names, 'embedding': Y_list, 'P': P_list, 'Q': Q_list, 'sigma': sigma_list, 'figure': fig.to_json()})  # Convert to JSON string
     else:
@@ -134,6 +135,20 @@ def update_scatter_plot(tsne_data):
             return json.loads(figure_json)
     # If no data or figure is available, return an empty figure or None
     return {}
+
+@app.callback(
+    Output('overview-plot', 'figure'),
+    [Input('tsne-data', 'data')]
+)
+def update_overview_plot(tsne_data):
+    if tsne_data:
+        tsne_data = json.loads(tsne_data)
+        figure_json = tsne_data.get('figure')
+        if figure_json:
+            return json.loads(figure_json)
+    # If no data or figure is available, return an empty figure or None
+    return {}
+
 
 
 ###################################################
