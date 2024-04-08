@@ -10,8 +10,8 @@ from sklearn import datasets
 
 from components import tsne_param_component, scatter_plot_card, features_ranking_card, overview_card
 
-from custom_tsne import CustomTSNE
-from explainer import Explainer
+from tsne_functions import compute_tsne, create_plot_tsne_embedding
+from explainer_functions import compute_all_gradients
 
 iris = datasets.load_iris()
 diabetes = datasets.load_diabetes()
@@ -77,11 +77,7 @@ def run_tsne(n_clicks, selected_datasets, perplexity, max_iter):
 
         X, targets, feature_names = prepare_data(selected_datasets)
 
-        tsne = CustomTSNE(X, targets)
-
-        print(perplexity, max_iter)
-
-        Y, P, Q, sigma = tsne.run(no_dims=2, perplexity=perplexity, max_iter=max_iter)
+        Y, P, Q, sigma = compute_tsne(X, no_dims=2, perplexity=perplexity, max_iter=max_iter)
     
         X_list = X.tolist()
         targets = targets.tolist()
@@ -90,7 +86,7 @@ def run_tsne(n_clicks, selected_datasets, perplexity, max_iter):
         Q_list = Q.tolist()
         sigma_list = sigma.tolist()
 
-        fig = tsne.plot_tsne_embedding()
+        fig = create_plot_tsne_embedding(X, Y, targets)
  
         return json.dumps({'X' : X_list, 'labels' : targets, 'feature_names' : feature_names, 'embedding': Y_list, 'P': P_list, 'Q': Q_list, 'sigma': sigma_list, 'figure': fig.to_json()})  # Convert to JSON string
     else:
@@ -114,8 +110,7 @@ def compute_gradients(n_clicks, tsne_data):
         Q = tsne_data.get('Q')  # Retrieve Q values
         sigma = tsne_data.get('sigma')  # Retrieve sigma values
 
-        explainer = Explainer(X, labels, iris.feature_names, Y, P, Q, sigma)
-        gradients = explainer.compute_all_gradients()
+        gradients = compute_all_gradients(X, Y, P, Q, sigma)
 
         # TODO: store these gradients
 
