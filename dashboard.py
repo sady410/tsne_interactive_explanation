@@ -89,49 +89,27 @@ def run_tsne(n_clicks, selected_datasets, perplexity, max_iter):
         Q_list = Q.tolist()
         sigma_list = sigma.tolist()
 
-        fig = create_plot_tsne_embedding(X, Y, targets)
+        gradients = compute_all_gradients(X, Y, P, Q, sigma)
+
+        tsne_scatter_plot = create_plot_tsne_embedding(X, Y, targets)
+        explanation_bar_plot = create_feature_importance_ranking_plot(gradients, feature_names)
 
         # Convert to JSON string
-        return json.dumps({'X': X_list, 'labels': targets, 'feature_names': feature_names, 'embedding': Y_list, 'P': P_list, 'Q': Q_list, 'sigma': sigma_list, 'figure': fig.to_json()})
+        return json.dumps({'X': X_list, 'labels': targets, 'feature_names': feature_names, 
+                           'embedding': Y_list, 'P': P_list, 'Q': Q_list, 'sigma': sigma_list, 
+                           'gradients': gradients.tolist(),'tsne_scatterplot': tsne_scatter_plot.to_json(), 
+                           'explanation_barplot': explanation_bar_plot.to_json()})
     else:
         return json.dumps({})  # Return empty JSON string
 
-
 @app.callback(
-    Output('gradients-data', 'data'),
-    [Input('run-tsne-button', 'n_clicks')],
-    [State('tsne-data', 'data')]
+        Output('explanation-barplot', 'figure'),
+        [Input('tsne-data', 'data')]
 )
-def compute_gradients(n_clicks, tsne_data):
-    if n_clicks > 0:
-        if not tsne_data:
-            return "Please run t-SNE first."
-
-        tsne_data = json.loads(tsne_data)
-        X = np.array(tsne_data.get('X'))  # Retrieve X data
-        feature_names = tsne_data.get('feature_names') # Retrieve feature names
-        Y = np.array(tsne_data.get('embedding'))  # Retrieve embedding
-        P = np.array(tsne_data.get('P'))  # Retrieve P values
-        Q = np.array(tsne_data.get('Q'))  # Retrieve Q values
-        sigma = np.array(tsne_data.get('sigma'))  # Retrieve sigma values
-
-        gradients = compute_all_gradients(X, Y, P, Q, sigma)
-
-        fig = create_feature_importance_ranking_plot(gradients, feature_names)
-
-        return json.dumps({'gradients': gradients.tolist(), 'figure': fig.to_json()})
-    else:
-        return ""
-
-
-@app.callback(
-        Output('explanation-plot', 'figure'),
-        [Input('gradients-data', 'data')]
-)
-def update_explanation_plot(gradients_data):
+def update_explanation_bar_plot(gradients_data):
     if gradients_data:
         gradients_data = json.loads(gradients_data)
-        figure_json = gradients_data.get('figure')
+        figure_json = gradients_data.get('explanation_barplot')
         if figure_json:
             return json.loads(figure_json)
     return {}
@@ -154,7 +132,7 @@ def update_explanation_plot(gradients_data):
 def update_scatter_plot(tsne_data):
     if tsne_data:
         tsne_data = json.loads(tsne_data)
-        figure_json = tsne_data.get('figure')
+        figure_json = tsne_data.get('tsne_scatterplot')
         if figure_json:
             return json.loads(figure_json)
     return {}
@@ -167,7 +145,7 @@ def update_scatter_plot(tsne_data):
 def update_overview_plot(tsne_data):
     if tsne_data:
         tsne_data = json.loads(tsne_data)
-        figure_json = tsne_data.get('figure')
+        figure_json = tsne_data.get('tsne_scatterplot')
         if figure_json:
             return json.loads(figure_json)
     # If no data or figure is available, return an empty figure or None

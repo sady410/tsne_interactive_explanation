@@ -90,7 +90,7 @@ features_ranking_card = html.Div(
         html.Div("Features Ranking", className="section-title"),
         html.Div(
             [
-                dcc.Graph(id='explanation-plot', className="explanation-plot")
+                dcc.Graph(id='explanation-barplot', className="explanation-plot")
             ]
         )
     ],
