@@ -120,8 +120,114 @@ def _compute_xy_derivative(i, X, y, sigma):
     # return 4 * np.delete( ((v_ij_d * E_ij).reshape(n, 1, 1) * y_ij), i, axis=0).sum(axis=0)
     return 4 * ( v_ij_d.T @ ( y_ij * E_ij.reshape(n, 1) ) )
 
+
 ###################################
 ##########  PLOTTING  #############
 ###################################
 
-# TODO: adapt from explainer.py
+
+def plot_feature_importance_ranking(gradients, features):  
+
+    norms = np.zeros(gradients.shape[2])
+
+    for g in gradients:
+        norm = np.linalg.norm(g, axis=0)
+        norms += (norm / np.sum(norm))
+
+    mean_norms = norms/gradients.shape[2]
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(x=mean_norms, y=features, orientation="h", showlegend=False))
+
+    fig.update_yaxes(categoryorder="total ascending", showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_xaxes(ticks="outside", showline=True, linewidth=2, linecolor='black', showgrid=False, zerolinecolor="grey", zerolinewidth=1, mirror=True)
+
+    fig.update_layout( 
+                template="simple_white")
+
+    return fig
+
+def plot_arrow_fields(scaled_gradients, features, feature_id, scale = 1):
+
+    fig = ff.create_quiver(Y[:, 0], Y[:, 1], scaled_gradients[:, 0, feature_id], scaled_gradients[:, 1, feature_id], scale=scale)
+
+    # fig.add_trace(go.Contour(x=df["comp-1"],y=df["comp-2"],z=np.array(activations[:, i])))
+
+    fig.update_layout(
+
+        xaxis=dict(showgrid=False, zeroline=False, mirror=True),
+        yaxis=dict(showgrid=False, zeroline=False, mirror=True),
+
+        showlegend=False,
+        template="simple_white"
+    )
+
+    return fig
+
+def plot_combined_gradients(gradients, features, instance_id):
+    combined_magnitude = np.linalg.norm(gradients[instance_id], axis=0)
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(x=combined_magnitude, y=features, orientation="h", name="Combined Gradients", showlegend=False))
+
+    fig.update_yaxes(categoryorder="total ascending", showline=True, linewidth=2, linecolor='black', mirror=True)
+    fig.update_xaxes(ticks="outside", showline=True, linewidth=2, linecolor='black', showgrid=False, zerolinecolor="grey", zerolinewidth=1, mirror=True)
+
+    fig.update_layout(height=1000, width=900, font=dict(size=15), template="simple_white")
+    
+    return fig
+
+def plot_top_gradient_vectors(gradients, Y, features, instance_id, nb_features):
+
+    combined_magnitude = np.linalg.norm(gradients[instance_id], axis=0)
+    top_features_indices = np.argsort(combined_magnitude)[-nb_features:]
+    vectors = gradients[instance_id][:, top_features_indices]
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=Y[:, 0],
+        y=Y[:, 1],
+        mode="markers",
+        marker=dict(size=7),
+        showlegend=False
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=[Y[instance_id, 0]],
+        y=[Y[instance_id, 1]],
+        mode="markers",
+        marker=dict(color="crimson", size=7),
+        name="Instance " + str(instance_id),
+    ))
+
+    # Unpack vectors for plotting
+    x_endpoints = [Y[instance_id, 0] + vector[0]*20 for vector in vectors.T]
+    y_endpoints = [Y[instance_id, 1] + vector[1]*20 for vector in vectors.T]
+
+    colors = ['yellow', 'green', 'blue', 'orange', 'purple']  # Choose different colors for each line
+
+    for i, (x_end, y_end, feature_id) in enumerate(zip(x_endpoints, y_endpoints, top_features_indices)):
+        fig.add_trace(go.Scatter(
+            x=[Y[instance_id, 0], x_end],
+            y=[Y[instance_id, 1], y_end],
+            mode="lines",
+            line=dict(color=colors[i], width=2),
+            name=features[feature_id],
+        ))
+
+    fig.update_layout(
+        template="simple_white",
+        # legend=dict(
+        #     x=1,
+        #     y=1,
+        #     xanchor='right',
+        #     yanchor='top',
+        #     bgcolor='rgba(255, 255, 255, 0)',
+        #     bordercolor='rgba(255, 255, 255, 0)'
+        # )
+    )
+
+    return fig
