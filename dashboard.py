@@ -33,7 +33,6 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div([
     dcc.Store(id='tsne-data'),
-    dcc.Store(id='gradients-data'),
     html.Div([
         html.Div([
             html.Div([
