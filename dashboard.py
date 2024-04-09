@@ -107,21 +107,44 @@ def compute_gradients(n_clicks, tsne_data):
             return "Please run t-SNE first."
 
         tsne_data = json.loads(tsne_data)
-        X = tsne_data.get('X')  # Retrieve X data
-        labels = tsne_data.get('labels')  # Retrieve labels
-        Y = tsne_data.get('embedding')  # Retrieve embedding
-        P = tsne_data.get('P')  # Retrieve P values
-        Q = tsne_data.get('Q')  # Retrieve Q values
-        sigma = tsne_data.get('sigma')  # Retrieve sigma values
+        X = np.array(tsne_data.get('X'))  # Retrieve X data
+        feature_names = tsne_data.get('feature_names') # Retrieve feature names
+        Y = np.array(tsne_data.get('embedding'))  # Retrieve embedding
+        P = np.array(tsne_data.get('P'))  # Retrieve P values
+        Q = np.array(tsne_data.get('Q'))  # Retrieve Q values
+        sigma = np.array(tsne_data.get('sigma'))  # Retrieve sigma values
 
         gradients = compute_all_gradients(X, Y, P, Q, sigma)
 
-        # TODO: store these gradients
+        fig = create_feature_importance_ranking_plot(gradients, feature_names)
 
-        return json.dumps({})
+        return json.dumps({'gradients': gradients.tolist(), 'figure': fig.to_json()})
     else:
         return ""
 
+
+@app.callback(
+        Output('explanation-plot', 'figure'),
+        [Input('gradients-data', 'data')]
+)
+def update_explanation_plot(gradients_data):
+    if gradients_data:
+        gradients_data = json.loads(gradients_data)
+        figure_json = gradients_data.get('figure')
+        if figure_json:
+            return json.loads(figure_json)
+    return {}
+
+# @app.callback(
+#         Output('average-feature-distribution-plot', 'figure'),
+#         [Input('tsne-data', 'data')]
+# )
+# def update_average_feature_distribution_plot(tsne_data):
+#     if tsne_data:
+#         tsne_data = json.loads(tsne_data)
+#         return create_average_feature_distribution_plot()
+#     return {}
+    
 
 @app.callback(
     Output('tsne-plot', 'figure'),
@@ -133,7 +156,6 @@ def update_scatter_plot(tsne_data):
         figure_json = tsne_data.get('figure')
         if figure_json:
             return json.loads(figure_json)
-    # If no data or figure is available, return an empty figure or None
     return {}
 
 

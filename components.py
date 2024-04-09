@@ -1,4 +1,5 @@
 from pydoc import classname
+
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
@@ -89,7 +90,7 @@ features_ranking_card = html.Div(
         html.Div("Features Ranking", className="section-title"),
         html.Div(
             [
-                dcc.Graph(id='features-ranking-plot', className="explanation-plot")
+                dcc.Graph(id='explanation-plot', className="explanation-plot")
             ]
         )
     ],

@@ -126,7 +126,7 @@ def _compute_xy_derivative(i, X, y, sigma):
 ###################################
 
 
-def plot_feature_importance_ranking(gradients, features):  
+def create_feature_importance_ranking_plot(gradients, features):  
 
     norms = np.zeros(gradients.shape[2])
 
@@ -148,7 +148,7 @@ def plot_feature_importance_ranking(gradients, features):
 
     return fig
 
-def plot_arrow_fields(scaled_gradients, features, feature_id, scale = 1):
+def create_arrow_fields_plot(scaled_gradients, features, feature_id, scale = 1):
 
     fig = ff.create_quiver(Y[:, 0], Y[:, 1], scaled_gradients[:, 0, feature_id], scaled_gradients[:, 1, feature_id], scale=scale)
 
@@ -165,7 +165,7 @@ def plot_arrow_fields(scaled_gradients, features, feature_id, scale = 1):
 
     return fig
 
-def plot_combined_gradients(gradients, features, instance_id):
+def combined_gradients_plot(gradients, features, instance_id):
     combined_magnitude = np.linalg.norm(gradients[instance_id], axis=0)
 
     fig = go.Figure()
@@ -179,7 +179,7 @@ def plot_combined_gradients(gradients, features, instance_id):
     
     return fig
 
-def plot_top_gradient_vectors(gradients, Y, features, instance_id, nb_features):
+def create_top_gradient_vectors_plot(gradients, Y, features, instance_id, nb_features):
 
     combined_magnitude = np.linalg.norm(gradients[instance_id], axis=0)
     top_features_indices = np.argsort(combined_magnitude)[-nb_features:]
