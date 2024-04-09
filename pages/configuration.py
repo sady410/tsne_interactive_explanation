@@ -1,9 +1,9 @@
 import dash
 import dash_bootstrap_components as dbc
-from components import *
 import dash
 import json
 from dash.dependencies import Input, Output, State
+from dash import dcc, html
 
 
 def layout():
@@ -15,6 +15,7 @@ def layout():
 def tsne_param_component():
     return html.Div(
         [
+            html.Div("InsightSNE", className="page-title text-center w-100 my-5"),
             html.Div(
                 [
                     html.Div(
@@ -45,23 +46,24 @@ def tsne_param_component():
                     html.Div(
                         [
                             dbc.Label("Max Iterations",
-                                      className="input-label"),
+                                      className="input-label mt-3"),
                             dbc.Input(id="max-iterations-input", placeholder="",
                                       type="number", size="sm", value=400),
                         ],
                         className="",
 
                     ),
+                    html.Hr(),
                     html.Div(
                         [
-                            dbc.Button('Run t-SNE', id='run-tsne-button',
+                            dbc.Button('Visualize', id='run-tsne-button',
                                        n_clicks=0, color='primary', className="w-100"),
                         ],
                         className="mt-3"
                     )
-                ]
+                ], className="card"
             )
-        ], className="parameters-container"
+        ], className="parameters-container mt-5"
     )
 
 

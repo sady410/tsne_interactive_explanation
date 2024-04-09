@@ -1,5 +1,19 @@
+
+body {
+    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    height: 100vh;
+}
+
 .debug {
     border: 1px solid red;
+}
+
+.card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .max-width-container {
@@ -27,9 +41,9 @@
     height: 30rem;
 }
 
-.section-title {
-    font-size: 1rem;
-    font-weight: 300;
+.page-title {
+    font-size: 2rem;
+    font-weight: 200;
     margin-bottom: 1rem;
 }
 

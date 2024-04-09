@@ -156,6 +156,10 @@ def create_plot_tsne_embedding(X, Y, targets):
     df["comp-2"] = Y[:,1]
 
     fig = px.scatter(df, x="comp-1", y="comp-2", color="class", hover_data=["id"])
+    fig.update_layout({
+        'plot_bgcolor': "rgba(0, 0, 0, 0)",
+        'paper_bgcolor': "rgba(0, 0, 0, 0)",
+    })
 
     fig.update_layout(
         showlegend=False,

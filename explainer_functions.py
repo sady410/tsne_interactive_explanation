@@ -144,7 +144,10 @@ def create_feature_importance_ranking_plot(gradients, features):
     fig.update_xaxes(ticks="outside", showline=True, linewidth=2, linecolor='black', showgrid=False, zerolinecolor="grey", zerolinewidth=1, mirror=True)
 
     fig.update_layout( 
-                template="simple_white")
+            template="simple_white",
+            plot_bgcolor= "rgba(0, 0, 0, 0)",
+            paper_bgcolor= "rgba(0, 0, 0, 0)",
+    )
 
     return fig
 
@@ -155,10 +158,10 @@ def create_arrow_fields_plot(scaled_gradients, features, feature_id, scale = 1):
     # fig.add_trace(go.Contour(x=df["comp-1"],y=df["comp-2"],z=np.array(activations[:, i])))
 
     fig.update_layout(
-
         xaxis=dict(showgrid=False, zeroline=False, mirror=True),
         yaxis=dict(showgrid=False, zeroline=False, mirror=True),
-
+        plot_bgcolor= "rgba(0, 0, 0, 0)",
+        paper_bgcolor= "rgba(0, 0, 0, 0)",
         showlegend=False,
         template="simple_white"
     )
@@ -175,7 +178,11 @@ def combined_gradients_plot(gradients, features, instance_id):
     fig.update_yaxes(categoryorder="total ascending", showline=True, linewidth=2, linecolor='black', mirror=True)
     fig.update_xaxes(ticks="outside", showline=True, linewidth=2, linecolor='black', showgrid=False, zerolinecolor="grey", zerolinewidth=1, mirror=True)
 
-    fig.update_layout(height=1000, width=900, font=dict(size=15), template="simple_white")
+    fig.update_layout(
+        height=1000, width=900, font=dict(size=15), template="simple_white",
+        plot_bgcolor= "rgba(0, 0, 0, 0)",
+        paper_bgcolor= "rgba(0, 0, 0, 0)",
+    )
     
     return fig
 
@@ -220,6 +227,8 @@ def create_top_gradient_vectors_plot(gradients, Y, features, instance_id, nb_fea
 
     fig.update_layout(
         template="simple_white",
+        plot_bgcolor= "rgba(0, 0, 0, 0)",
+        paper_bgcolor= "rgba(0, 0, 0, 0)",
         # legend=dict(
         #     x=1,
         #     y=1,

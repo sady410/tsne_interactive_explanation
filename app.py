@@ -4,7 +4,6 @@ from dash import dcc, html
 from flask import session
 from sklearn import datasets
 
-from components import *
 from explainer_functions import compute_all_gradients
 from tsne_functions import compute_tsne, create_plot_tsne_embedding
 
