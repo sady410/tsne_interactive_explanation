@@ -1,14 +1,14 @@
+from pydoc import classname
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-tsne_param_component = dbc.Card(
+tsne_param_component = html.Div(
     [
-        dbc.CardHeader("Parameters", className="card-header"),
-        dbc.CardBody(
+        html.Div(
             [
                 html.Div(
                     [
-                        html.Label('Dataset', className="mr-2", style={'font-size': 'small', 'flex': '1'}),
+                        dbc.Label("Dataset", className="input-label"),
                         dcc.Dropdown(
                             id='dataset-dropdown',
                             options=[
@@ -17,94 +17,90 @@ tsne_param_component = dbc.Card(
                             ],
                             value=None,
                             multi=False,
-                            style={'width': '70%', 'font-size': 'small', 'flex': '2'}
+                            className=""
                         ),
                     ],
-                    className="mb-3",
-                    style={'display': 'flex', 'align-items': 'center'}
+                    className="",
+                ),
+                html.Hr(),
+                html.Div(
+                    [
+                        dbc.Label("Perplexity", className="input-label"),
+                        dbc.Input(id="perplexity-input", placeholder="", type="number", size="sm", value=30),
+                    ],
+                    className="",
                 ),
                 html.Div(
                     [
-                        html.Label('Perplexity', className="mr-2", style={'font-size': 'small', 'flex': '1'}),
-                        dcc.Input(
-                            id='perplexity-input',
-                            type='number',
-                            value=30,
-                            style={'width': '70%', 'font-size': 'small', 'flex': '2'}
-                        ),
+                        dbc.Label("Max Iterations", className="input-label"),
+                        dbc.Input(id="max-iterations-input", placeholder="", type="number", size="sm", value=400),
                     ],
-                    className="mb-3",
-                    style={'display': 'flex', 'align-items': 'center'}
+                    className="",
+                    
                 ),
                 html.Div(
                     [
-                        html.Label('Max Iterations', className="mr-2", style={'font-size': 'small', 'flex': '1'}),
-                        dcc.Input(
-                            id='max-iterations-input',
-                            type='number',
-                            value=400,
-                            style={'width': '70%', 'font-size': 'small', 'flex': '2'}
-                        ),
+                        dbc.Button('Run t-SNE', id='run-tsne-button', n_clicks=0, color='primary', className="w-100"),
                     ],
-                    className="mb-3",
-                    style={'display': 'flex', 'align-items': 'center'}
-                ),
-                html.Div(
-                    [
-                        dbc.Button('Run t-SNE', id='run-tsne-button', n_clicks=0, color='primary', className='mr-2', style={'font-size': 'small'}),
-                        dbc.Button('Explain', id='explain-button', n_clicks=0, color='secondary', className='mr-2', style={'font-size': 'small'})
-                    ],
-                    className="d-flex justify-content-between"
+                    className="mt-3"
                 )
             ]
         )
-    ], className="my-2", style={"flex": "1"}
+    ], className="parameters-container"
 )
 
-overview_card = dbc.Card(
+overview_card = html.Div(
     [
-        dbc.CardHeader("Overview", className="card-header"),
-        dbc.CardBody(
+        html.Div(
             [
                 dcc.Loading(
                     id="loading-overview-plot",
                     type="circle",
+                    className="overview-plot ",
                     children=[
-                        dcc.Graph(id='overview-plot', config={'displayModeBar': False})
+                        dcc.Graph(id='overview-plot', config={'displayModeBar': False}, className="overview-plot ")
                     ]
                 )
 
             ]
         )
-    ], className="my-2", style={"flex": "1"}
+    ], className=""
 )
 
-scatter_plot_card = dbc.Card(
+scatter_plot_card = html.Div(
     [
-        dbc.CardHeader("Scatter Plot", className="card-header"),
-        dbc.CardBody(
+        html.Div(
             [
                 dcc.Loading(
-                    id="loading-scatter-plot",
+                    id="loading-tsne-plot",
                     type="circle",
+                    className="main-plot",
                     children=[
-                        dcc.Graph(id='tsne-plot',  config={'displayModeBar': False})
+                        dcc.Graph(id='tsne-plot',  config={'displayModeBar': False}, className="main-plot")
                     ]
                 )
             ],
-            style={'height': 'calc(100% - 50px)'}  # Subtracting header height
         )
-    ], className="my-2", style={"height": "100vh"}
+    ], className="", 
 )
 
-features_ranking_card = dbc.Card(
+features_ranking_card = html.Div(
     [
-        dbc.CardHeader("Features Ranking", className="card-header"),
-        dbc.CardBody(
+        html.Div("Features Ranking", className="section-title"),
+        html.Div(
             [
-                dcc.Graph(id='features-ranking-plot')
+                dcc.Graph(id='features-ranking-plot', className="explanation-plot")
             ]
         )
     ],
-    className="my-2", style={"height": "100vh"}
+    className="", 
 )
+
+instances_info = html.Div([
+        dbc.Col([
+            html.Div([
+                html.Div("Instances Info", className="section-title"),
+                    html.Div(id='instances-info')
+            ])
+        ])
+    ])

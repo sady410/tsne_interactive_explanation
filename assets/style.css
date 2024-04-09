@@ -1,0 +1,39 @@
+.debug {
+    border: 1px solid red;
+}
+
+.max-width-container {
+    max-width: 120rem;
+}
+
+.max-content {
+    max-width: max-content;
+    width: 100%;
+}
+
+.main-plot {
+    width: 50rem;
+    height: 50rem;
+    max-width: min-content !important;
+}
+
+.overview-plot {
+    width: 18rem;
+    height: 18rem;
+}
+
+.explanation-plot {
+    width: 30rem;
+    height: 30rem;
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+}
+
+.input-label {
+    font-size: 0.88rem;
+    margin-bottom: 0;
+}
