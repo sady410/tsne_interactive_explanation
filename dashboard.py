@@ -8,7 +8,8 @@ from dash.dependencies import Input, Output, State
 from sklearn import datasets
 
 from components import *
-from explainer_functions import compute_all_gradients
+from explainer_functions import (compute_all_gradients,
+                                 create_feature_importance_ranking_plot)
 from tsne_functions import compute_tsne, create_plot_tsne_embedding
 
 iris = datasets.load_iris()
