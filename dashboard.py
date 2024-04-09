@@ -7,8 +7,7 @@ from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from sklearn import datasets
 
-from components import (features_ranking_card, overview_card,
-                        scatter_plot_card, tsne_param_component)
+from components import * 
 from explainer_functions import compute_all_gradients
 from tsne_functions import compute_tsne, create_plot_tsne_embedding
 
@@ -29,32 +28,23 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 ######################################################
 
 
-app.layout = dbc.Container([
+app.layout = html.Div([
     dcc.Store(id='tsne-data'),
     dcc.Store(id='gradients-data'),
-    dbc.Row([
-        dbc.Col([
+        html.Div([
             tsne_param_component,
             overview_card
-        ], width=3, style={"display": "flex", "flex-direction": "column", "height": "100vh"}),
-        dbc.Col([
+        ], className="d-flex debug"),
+        html.Div([
             scatter_plot_card
-        ], width=6),
-        dbc.Col([
+        ], className="d-flex debug"),
+        html.Div([
             features_ranking_card
-        ], width=3)
-    ], style={"display": "flex"}),
-    dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dbc.CardHeader("Instances Info", className="card-header"),
-                dbc.CardBody([
-                    html.Div(id='instances-info')
-                ])
-            ])
-        ], width=12)
-    ])
-], className="mt-1")
+        ], className="d-flex debug"),
+        html.Div([
+            instances_info
+        ], className="d-flex debug"),
+], className="d-flex justify-content-center")
 
 
 #########################################################
