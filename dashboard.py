@@ -2,16 +2,15 @@ import json
 
 import dash
 import dash_bootstrap_components as dbc
+import numpy as np
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
-
-import numpy as np
 from sklearn import datasets
 
-from components import tsne_param_component, scatter_plot_card, features_ranking_card, overview_card
-
-from tsne_functions import compute_tsne, create_plot_tsne_embedding
+from components import (features_ranking_card, overview_card,
+                        scatter_plot_card, tsne_param_component)
 from explainer_functions import compute_all_gradients
+from tsne_functions import compute_tsne, create_plot_tsne_embedding
 
 iris = datasets.load_iris()
 diabetes = datasets.load_diabetes()
