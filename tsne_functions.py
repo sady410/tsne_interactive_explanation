@@ -165,9 +165,8 @@ def create_plot_tsne_embedding(X, Y, targets):
         showlegend=False,
         yaxis_title=None,
         xaxis_title=None,
-        font=dict(size=5),
-        xaxis=dict(tickfont=dict(size=5), ticks="outside", showgrid=False, zeroline=False, mirror=True),
-        yaxis=dict(tickfont=dict(size=5), ticks="outside", showgrid=False, zeroline=False, mirror=True),
+        xaxis=dict(showticklabels=False, mirror=True),
+        yaxis=dict(showticklabels=False, mirror=True),
         margin=dict(l=2, r=2, t=2, b=2),
         template="simple_white"
     )

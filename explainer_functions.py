@@ -168,8 +168,8 @@ def create_arrow_fields_plot(scaled_gradients, features, feature_id, scale = 1):
 
     return fig
 
-def combined_gradients_plot(gradients, features, instance_id):
-    combined_magnitude = np.linalg.norm(gradients[instance_id], axis=0)
+def create_combined_gradients_plot(gradients, features, instance_idx):
+    combined_magnitude = np.linalg.norm(gradients[instance_idx], axis=0)
 
     fig = go.Figure()
 
@@ -178,10 +178,10 @@ def combined_gradients_plot(gradients, features, instance_id):
     fig.update_yaxes(categoryorder="total ascending", showline=True, linewidth=2, linecolor='black', mirror=True)
     fig.update_xaxes(ticks="outside", showline=True, linewidth=2, linecolor='black', showgrid=False, zerolinecolor="grey", zerolinewidth=1, mirror=True)
 
-    fig.update_layout(
-        height=1000, width=900, font=dict(size=15), template="simple_white",
-        plot_bgcolor= "rgba(0, 0, 0, 0)",
-        paper_bgcolor= "rgba(0, 0, 0, 0)",
+    fig.update_layout( 
+            template="simple_white",
+            plot_bgcolor= "rgba(0, 0, 0, 0)",
+            paper_bgcolor= "rgba(0, 0, 0, 0)",
     )
     
     return fig

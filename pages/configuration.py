@@ -101,14 +101,11 @@ def run_tsne(selected_datasets, perplexity, max_iter):
     gradients = compute_all_gradients(X, Y, P, Q, sigma)
 
     tsne_scatter_plot = create_plot_tsne_embedding(X, Y, targets)
-    explanation_bar_plot = create_feature_importance_ranking_plot(
-        gradients, feature_names)
 
     # Convert to JSON string
     return json.dumps({'X': X_list, 'labels': targets, 'feature_names': feature_names,
                        'embedding': Y_list, 'P': P_list, 'Q': Q_list, 'sigma': sigma_list,
-                       'gradients': gradients.tolist(), 'tsne_scatterplot': tsne_scatter_plot.to_json(),
-                       'explanation_barplot': explanation_bar_plot.to_json()})
+                       'gradients': gradients.tolist(), 'tsne_scatterplot': tsne_scatter_plot.to_json()})
 
 
 @dash.callback(
