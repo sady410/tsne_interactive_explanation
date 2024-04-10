@@ -1,11 +1,7 @@
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from flask import session
-from sklearn import datasets
 
-from explainer_functions import compute_all_gradients
-from tsne_functions import compute_tsne, create_plot_tsne_embedding
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 

@@ -5,7 +5,6 @@ import json
 from dash.dependencies import Input, Output, State
 from dash import dcc, html
 
-
 def layout():
     return html.Div([
         tsne_param_component()
@@ -68,9 +67,9 @@ def tsne_param_component():
 
 
 def run_tsne(selected_datasets, perplexity, max_iter):
-    from tsne_functions import compute_tsne, create_plot_tsne_embedding
-    from explainer_functions import (
-        compute_all_gradients, create_feature_importance_ranking_plot)
+    from tsne import compute_tsne
+    from plots import create_plot_tsne_embedding
+    from explainer import compute_all_gradients
 
     def prepare_data(selected_dataset):
         from sklearn import datasets
@@ -88,8 +87,7 @@ def run_tsne(selected_datasets, perplexity, max_iter):
 
     X, targets, feature_names = prepare_data(selected_datasets)
 
-    Y, P, Q, sigma = compute_tsne(
-        X, no_dims=2, perplexity=perplexity, max_iter=max_iter)
+    Y, P, Q, sigma = compute_tsne(X, no_dims=2, perplexity=perplexity, max_iter=max_iter)
 
     X_list = X.tolist()
     targets = targets.tolist()

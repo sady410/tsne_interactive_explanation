@@ -6,7 +6,7 @@ from dash import dcc, html
 
 import numpy as np
 
-from explainer_functions import create_feature_importance_ranking_plot, create_combined_gradients_plot
+from plots import create_feature_importance_ranking_plot, create_combined_gradients_plot
 
 def overview_card():
     return html.Div(

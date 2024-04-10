@@ -142,35 +142,3 @@ def compute_tsne(X, no_dims = 2, perplexity = 30.0, max_iter = 400, Y_init = Non
             P = P / 4
 
     return Y, P, Q, sigma
-
-###########################################
-#############  PLOTTING  ##################
-###########################################
-
-def create_plot_tsne_embedding(X, Y, targets):
-
-    df = pd.DataFrame()
-    df["id"] = np.array([i for i in range(X.shape[0])])
-    df["class"] = np.array([str(i) for i in targets])
-    df["comp-1"] = Y[:,0]
-    df["comp-2"] = Y[:,1]
-
-    fig = px.scatter(df, x="comp-1", y="comp-2", color="class", hover_data=["id"])
-    fig.update_layout({
-        'plot_bgcolor': "rgba(0, 0, 0, 0)",
-        'paper_bgcolor': "rgba(0, 0, 0, 0)",
-    })
-
-    fig.update_layout(
-        showlegend=False,
-        yaxis_title=None,
-        xaxis_title=None,
-        xaxis=dict(showticklabels=False, mirror=True),
-        yaxis=dict(showticklabels=False, mirror=True),
-        margin=dict(l=2, r=2, t=2, b=2),
-        template="simple_white"
-    )
-
-    fig.update_traces(marker={"size": 10, "line":dict(width=2, color="DarkSlateGrey")})
-    
-    return fig
