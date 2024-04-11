@@ -6,7 +6,7 @@ from dash import dcc, html
 
 import numpy as np
 
-from plots import create_feature_importance_ranking_plot, create_combined_gradients_plot
+from plots import create_feature_importance_ranking_plot, create_combined_gradients_plot, create_average_feature_distribution_plot
 
 def overview_card():
     return html.Div(
@@ -49,14 +49,14 @@ def scatter_plot_card():
     )
 
 
-def features_ranking_card():
+def explanation_plot_card():
     return html.Div(
         [
-            html.Div("Features Ranking", className="section-title"),
+            html.Div("Explanation Plot", className="section-title"), # TODO: Change title explanation is global
             html.Div(
                 [
-                    dcc.Graph(id='explanation-barplot',
-                              className="explanation-plot")
+                    dcc.Graph(id='explanation-barplot', 
+                              config={'displayModeBar': False}, className="explanation-plot")
                 ]
             )
         ],
@@ -64,12 +64,17 @@ def features_ranking_card():
     )
 
 
-def instances_info():
+def feature_distribution_plot():
     return html.Div([
         dbc.Col([
             html.Div([
-                html.Div("Instances Info", className="section-title"),
-                html.Div(id='instances-info')
+                html.Div("Feature distribution", className="section-title"),
+                html.Div(
+                [
+                    dcc.Graph(id='feature-distribution-plot',
+                              config={'displayModeBar': False}, className="feature-distribution-plot")
+                ]
+            )
             ])
         ])
     ])
@@ -86,14 +91,14 @@ def layout():
                     scatter_plot_card()
                 ], className="flex-grow-1 max-content"),
                 html.Div([
-                    features_ranking_card()
+                    explanation_plot_card()
                 ], className=""),
             ], className="d-flex justify-content-center"),
 
             html.Div([
 
                 html.Div([
-                    instances_info()
+                    feature_distribution_plot()
                 ], className=""),
 
             ], className="d-flex justify-content-center "),  # TODO
@@ -112,7 +117,6 @@ def update_scatter_plot(tsne_data):
         figure_json = tsne_data.get('tsne_scatterplot')
         if figure_json:
             return json.loads(figure_json)
-    # If no data or figure is available, return an empty figure or None
     return {}
 
 
@@ -122,7 +126,7 @@ def update_scatter_plot(tsne_data):
     [Input('tsne-plot', 'relayoutData')],
     prevent_initial_call=True
 )
-def update_overview_plot(tsne_data, relayout_data):
+def update_overview_plot(tsne_data, relayout_data): # TODO: Rectangle not persisting when changing tool. Why ?
 
     fig = {}
     if tsne_data is not None and tsne_data:
@@ -168,10 +172,10 @@ def update_overview_plot(tsne_data, relayout_data):
 @dash.callback(
     Output('explanation-barplot', 'figure'),
     [Input('tsne-data', 'data'),
-    Input('tsne-plot', 'selectedData')],
+    Input('tsne-plot', 'selectedData'),
+    Input('tsne-plot', 'clickData')]
 )
-def update_explanation_bar_plot(tsne_data, selected_data):
-    
+def update_explanation_bar_plot(tsne_data, selected_data, click_data):
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -180,12 +184,45 @@ def update_explanation_bar_plot(tsne_data, selected_data):
         gradients = gradients_data.get('gradients')
         feature_names = gradients_data.get('feature_names')
         gradients = np.array(gradients)
-        
-        if triggered_component_id == 'tsne-plot' and selected_data is not None:
-            selected_indices = [point['pointIndex'] for point in selected_data['points']]
+
+        if triggered_component_id == 'tsne-plot':
+            if selected_data is not None and selected_data['points'] != []:
+                selected_indices = [point['customdata'][0] for point in selected_data['points']]
+            elif click_data is not None:
+                selected_indices = [click_data['points'][0]['customdata'][0]]
             return create_combined_gradients_plot(gradients, feature_names, selected_indices[0]) 
 
         return create_feature_importance_ranking_plot(gradients, feature_names)   
+    return {}
+
+@dash.callback(
+    Output('feature-distribution-plot', 'figure'),
+    [Input('tsne-data', 'data'),
+    Input('tsne-plot', 'selectedData'),
+    Input('tsne-plot', 'clickData')]
+)
+def update_feature_distribution_plot(tsne_data, selected_data, click_data):
+    ctx = dash.callback_context
+    triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if tsne_data is not None and tsne_data:
+        data = json.loads(tsne_data)
+        X = data.get('X')
+        feature_names = data.get('feature_names')
+        X = np.array(X)
+
+        if triggered_component_id == 'tsne-plot':
+            if selected_data is not None and selected_data['points'] != []:
+                selected_indices = [point['customdata'][0] for point in selected_data['points']]
+            elif click_data is not None:
+                selected_indices = [click_data['points'][0]['customdata'][0]]
+        else:
+            selected_indices = [i for i in range(X.shape[0])]
+        # print(feature_names, X, selected_indices)
+        return create_average_feature_distribution_plot(feature_names, X, selected_indices)
+    
+
+
     return {}
 
 dash.register_page(__name__)
