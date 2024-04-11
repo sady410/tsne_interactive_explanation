@@ -1,12 +1,15 @@
+import json
+
 import dash
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
-import json
-from dash import dcc, html
-
 import numpy as np
+from dash import dcc, html
+from dash.dependencies import Input, Output, State
 
-from plots import create_feature_importance_ranking_plot, create_combined_gradients_plot, create_average_feature_distribution_plot
+from plots import (create_average_feature_distribution_plot,
+                   create_combined_gradients_plot,
+                   create_feature_importance_ranking_plot)
+
 
 def overview_card():
     return html.Div(
@@ -211,17 +214,15 @@ def update_feature_distribution_plot(tsne_data, selected_data, click_data):
         feature_names = data.get('feature_names')
         X = np.array(X)
 
+        selected_indices = [i for i in range(X.shape[0])]
+
         if triggered_component_id == 'tsne-plot':
             if selected_data is not None and selected_data['points'] != []:
                 selected_indices = [point['customdata'][0] for point in selected_data['points']]
             elif click_data is not None:
-                selected_indices = [click_data['points'][0]['customdata'][0]]
-        else:
-            selected_indices = [i for i in range(X.shape[0])]
-        # print(feature_names, X, selected_indices)
+                selected_indices = [click_data['points'][0]['customdata'][0]]    
+        
         return create_average_feature_distribution_plot(feature_names, X, selected_indices)
-    
-
 
     return {}
 

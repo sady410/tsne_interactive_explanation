@@ -2,9 +2,8 @@
 import numpy as np
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import plotly.figure_factory as ff
-
+import plotly.graph_objects as go
 
 ################################
 ######### Other plots ##########
@@ -16,7 +15,7 @@ def create_average_feature_distribution_plot(feature_names, X, idx):
     df["feature"] = feature_names
     df["average"] = np.mean(X[idx], axis=0)
 
-    fig = px.histogram(df, x="feature", y="average", color="feature", labels={"average": "Average", "feature": "Feature"}, title="Average Feature Distribution")
+    fig = px.histogram(df, x="feature", y="average", color="feature", labels={"average": "Average", "feature": "Feature"})
 
     fig.update_layout({
         'plot_bgcolor': "rgba(0, 0, 0, 0)",
@@ -25,10 +24,8 @@ def create_average_feature_distribution_plot(feature_names, X, idx):
 
     fig.update_layout(
         showlegend=False,
-        yaxis_title=None,
-        xaxis_title=None,
-        xaxis=dict(showticklabels=False, mirror=True),
-        yaxis=dict(showticklabels=False, mirror=True),
+        xaxis=dict(mirror=True),
+        yaxis=dict(mirror=True),
         margin=dict(l=2, r=2, t=2, b=2),
         template="simple_white"
     )
