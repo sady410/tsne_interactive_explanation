@@ -129,8 +129,7 @@ def update_scatter_plot(tsne_data):
     [Input('tsne-plot', 'relayoutData')],
     prevent_initial_call=True
 )
-def update_overview_plot(tsne_data, relayout_data): # TODO: Rectangle not persisting when changing tool. Why ?
-
+def update_overview_plot(tsne_data, relayout_data):
     fig = {}
     if tsne_data is not None and tsne_data:
         tsne_data = json.loads(tsne_data)
@@ -191,9 +190,10 @@ def update_explanation_bar_plot(tsne_data, selected_data, click_data):
         if triggered_component_id == 'tsne-plot':
             if selected_data is not None and selected_data['points'] != []:
                 selected_indices = [point['customdata'][0] for point in selected_data['points']]
+                return create_combined_gradients_plot(gradients, feature_names, selected_indices[0]) 
             elif click_data is not None:
                 selected_indices = [click_data['points'][0]['customdata'][0]]
-            return create_combined_gradients_plot(gradients, feature_names, selected_indices[0]) 
+                return create_combined_gradients_plot(gradients, feature_names, selected_indices[0]) 
 
         return create_feature_importance_ranking_plot(gradients, feature_names)   
     return {}
