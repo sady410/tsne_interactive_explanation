@@ -31,7 +31,8 @@ def scatter_plot_card():
                                            'autoScale2d',
                                            'select2d']
                 },
-        className="main-plot")
+        className="main-plot",
+        responsive=True)
 
 
 def explanation_plot_card():
@@ -56,12 +57,11 @@ def layout():
                 overview_card(),
             ]),
             html.Div([
-                html.Div("Feature distribution", className="section-title"),
+                html.Div("Feature distribution", className="section-title mt-4"),
                 feature_distribution_plot()
             ], className="h-100")
         ], className="sub-container-1"),
         html.Div([
-            html.Div("t-SNE", className="section-title"),
             scatter_plot_card()
         ], className="sub-container-2"),
         html.Div([
