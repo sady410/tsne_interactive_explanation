@@ -1,53 +1,92 @@
-
+html,
 body {
-    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-    height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
 }
 
 .debug {
-    border: 1px solid red;
+  border: 1px solid red;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  border: 1px solid red;
+}
+
+.sub-container-1 {
+  width: 20vw;
+  border: 1px solid orange;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sub-container-2 {
+  width: 100%;
+  height: 100%;
+  border: 1px solid greenyellow;
+}
+
+.sub-container-3 {
+  width: 20vw;
+  height: 100%;
+  border: 1px solid red;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 200;
+  margin-bottom: 1rem;
+}
+
+.overflowY-scroll {
+  overflow-y: scroll;
 }
 
 .card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.max-width-container {
-    max-width: 120rem;
-}
-
-.max-content {
-    max-width: max-content;
-    width: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .main-plot {
-    width: 50rem;
-    height: 50rem;
-    max-width: min-content !important;
+  width: 100vh;
+  height: 100vh;
+  max-width: 90vh;
+  max-height: 90vh;
 }
 
 .overview-plot {
-    width: 18rem;
-    height: 18rem;
+  width: 100%;
+  max-width: 25vh;
+  max-height: 25vh;  
+}
+
+.feature-distribution-plot {
+  width: 100%;
+  max-width: 25vh;
+  max-height: 25vh;  
 }
 
 .explanation-plot {
-    width: 30rem;
-    height: 30rem;
+  width: 100%;
+  max-width: 25vh;
+  max-height: 25vh;  
 }
 
 .page-title {
-    font-size: 2rem;
-    font-weight: 200;
-    margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 200;
+  margin-bottom: 1rem;
 }
 
 .input-label {
-    font-size: 0.88rem;
-    margin-bottom: 0;
+  font-size: 0.88rem;
+  margin-bottom: 0;
 }
