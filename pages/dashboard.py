@@ -52,7 +52,8 @@ def layout():
                     html.Div([
                         html.Div("Feature distribution",
                                  className="section-title"),
-                        feature_distribution_plot()],
+                        # feature_distribution_plot()
+                        ],
                         className="section-title")
                     ], className="sub-container-1"),
         html.Div([
