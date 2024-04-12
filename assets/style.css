@@ -7,10 +7,6 @@ body {
   background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
 }
 
-.debug {
-  border: 1px solid red;
-}
-
 .main-container {
   display: flex;
   justify-content: center;
@@ -19,27 +15,25 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 .sub-container-1 {
-  border: 1px solid orange;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: fit-content;
-
+  height: 100%;
 }
 
 .sub-container-2 {
   width: fit-content;
   height: 100%;
-  border: 1px solid greenyellow;
 }
 
 .sub-container-3 {
   width: 20vw;
   height: 100%;
-  border: 1px solid red;
 }
 
 .section-title {
@@ -62,26 +56,22 @@ body {
 
 .main-plot {
   width: 90vh;
-  height: 90vh;
+  height: 100%;
 }
 
 .overview-plot {
-  width: 25vw;
-  height: 25vw;
-  max-width: 25vh;
-  max-height: 25vh;  
+  width: 18vw;
+  height: 18vw;
 }
 
 .feature-distribution-plot {
   width: 100%;
-  max-width: 25vh;
-  max-height: 25vh;  
+  height: 95%;
 }
 
-.explanation-plot {
+.explanation-barplot {
   width: 100%;
-  max-width: 25vh;
-  max-height: 25vh;  
+  height: 100%;
 }
 
 .page-title {

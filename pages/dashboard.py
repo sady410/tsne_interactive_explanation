@@ -13,7 +13,10 @@ from plots import (create_average_feature_distribution_plot,
 
 def overview_card():
     return dcc.Graph(
-        id='overview-plot', config={'displayModeBar': False, 'staticPlot': True}, className="overview-plot ")
+        id='overview-plot',
+        config={'displayModeBar': False,
+                'staticPlot': True},
+        className="overview-plot ")
 
 
 def scatter_plot_card():
@@ -21,44 +24,43 @@ def scatter_plot_card():
         id='tsne-plot',
         config={'displaylogo': False,
                 'displayModeBar': True,
-                'modeBarButtonsToRemove': ['zoomIn2d', 'zoomOut2d', 'toImage', 'autoScale2d', 'select2d']},
+                'modeBarButtonsToRemove': ['zoomIn2d',
+                                           'zoomOut2d',
+                                           'toImage',
+                                           'autoScale2d',
+                                           'select2d']
+                },
         className="main-plot")
 
 
 def explanation_plot_card():
-    return html.Div(
-        [
-            dcc.Graph(id='explanation-barplot',
-                      config={'displayModeBar': False}, className="explanation-plot")
-        ], className=""
-    )
+    return dcc.Graph(id='explanation-barplot',
+                     config={'displayModeBar': False},
+                     className="explanation-barplot",
+                     responsive=True)
 
 
 def feature_distribution_plot():
     return dcc.Graph(id='feature-distribution-plot',
-                      config={'displayModeBar': False}, className="feature-distribution-plot")
-   
-    
+                     config={'displayModeBar': False},
+                     className="feature-distribution-plot",
+                     responsive=True)
 
 
 def layout():
     return html.Div([
         html.Div([
-                    html.Div([
-                        html.Div("Overview Plot",
-                                 className="section-title"),
-                        overview_card(),
-                    ]),
-                    html.Div([
-                        html.Div("Feature distribution",
-                                 className="section-title"),
-                        # feature_distribution_plot()
-                        ],
-                        className="section-title")
-                    ], className="sub-container-1"),
+            html.Div([
+                html.Div("Overview Plot", className="section-title"),
+                overview_card(),
+            ]),
+            html.Div([
+                html.Div("Feature distribution", className="section-title"),
+                feature_distribution_plot()
+            ], className="h-100")
+        ], className="sub-container-1"),
         html.Div([
-            html.Div("t-SNE",
-                     className="section-title"),
+            html.Div("t-SNE", className="section-title"),
             scatter_plot_card()
         ], className="sub-container-2"),
         html.Div([
