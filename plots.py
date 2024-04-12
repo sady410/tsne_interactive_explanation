@@ -105,9 +105,9 @@ def create_combined_gradients_plot(gradients, features, instance_idx):
                   orientation="h", name="Combined Gradients", showlegend=False))
 
     fig.update_yaxes(categoryorder="total ascending", showline=True,
-                     linewidth=2, linecolor='black', mirror=True)
-    fig.update_xaxes(ticks="outside", showline=True, linewidth=2, linecolor='black',
-                     showgrid=False, zerolinecolor="grey", zerolinewidth=1, mirror=True)
+                      )
+    fig.update_xaxes(ticks="outside", showline=True, 
+                     showgrid=False, )
 
     fig.update_layout(
         template="simple_white",
