@@ -4,6 +4,13 @@ import dash
 import json
 from dash.dependencies import Input, Output, State
 from dash import dcc, html
+from tsne import compute_tsne
+from plots import create_plot_tsne_embedding
+from explainer import compute_all_gradients
+
+import numpy as np
+import pandas as pd
+from sklearn import datasets, preprocessing
 
 from sklearn import datasets
 
@@ -31,9 +38,10 @@ def tsne_param_component():
                                 id='dataset-dropdown',
                                 options=[
                                     {'label': 'Iris', 'value': 'iris'},
-                                    {'label': 'Diabetes', 'value': 'diabetes'}
+                                    {'label': 'Diabetes', 'value': 'diabetes'},
+                                    {'label': 'Countries', 'value': 'countries'}
                                 ],
-                                value=None,
+                                value='countries',
                                 multi=False,
                                 className=""
                             ),
@@ -74,16 +82,23 @@ def tsne_param_component():
 
 
 def run_tsne(selected_datasets, perplexity, max_iter):
-
     def prepare_data(selected_dataset):
 
         iris = datasets.load_iris()
         diabetes = datasets.load_diabetes()
+        countries = pd.read_csv("datasets/country_dataset_with_names.csv", index_col = 0)
 
         if selected_dataset == 'iris':
             return iris.data, iris.target, iris.feature_names
         elif selected_dataset == 'diabetes':
             return diabetes.data, diabetes.target, diabetes.feature_names
+        elif selected_dataset == 'countries':
+            X = countries.to_numpy()[0:].astype(np.float64)
+            scaler = preprocessing.StandardScaler()
+            X = scaler.fit_transform(X)
+            countries_names = countries.index.to_numpy()
+            feature_names = countries.columns.tolist()
+            return X, countries_names, feature_names
 
     if len(selected_datasets) == 0:
         return json.dumps({})
