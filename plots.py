@@ -15,7 +15,7 @@ def create_average_feature_distribution_plot(feature_names, X, idx):
     df["feature"] = feature_names
     df["average"] = np.mean(X[idx], axis=0)
 
-    fig = px.histogram(df, x="feature", y="average", color="feature", labels={"average": "Average", "feature": "Feature"})
+    fig = px.histogram(df, y="feature", x="average", color="feature", labels={"average": "Average", "feature": "Feature"})
 
     fig.update_layout({
         'plot_bgcolor': "rgba(0, 0, 0, 0)",
