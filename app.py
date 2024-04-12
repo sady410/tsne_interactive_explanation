@@ -9,7 +9,7 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=True),
     dcc.Store(id='tsne-data', storage_type='session'),
     dash.page_container
-], className="d-flex justify-content-center")
+])  
 
 
 if __name__ == '__main__':
