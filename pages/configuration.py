@@ -5,6 +5,13 @@ import json
 from dash.dependencies import Input, Output, State
 from dash import dcc, html
 
+from sklearn import datasets
+
+from tsne import compute_tsne
+from plots import create_plot_tsne_embedding
+from explainer import compute_all_gradients
+
+
 def layout():
     return html.Div([
         tsne_param_component()
@@ -67,12 +74,8 @@ def tsne_param_component():
 
 
 def run_tsne(selected_datasets, perplexity, max_iter):
-    from tsne import compute_tsne
-    from plots import create_plot_tsne_embedding
-    from explainer import compute_all_gradients
 
     def prepare_data(selected_dataset):
-        from sklearn import datasets
 
         iris = datasets.load_iris()
         diabetes = datasets.load_diabetes()
@@ -98,12 +101,10 @@ def run_tsne(selected_datasets, perplexity, max_iter):
 
     gradients = compute_all_gradients(X, Y, P, Q, sigma)
 
-    tsne_scatter_plot = create_plot_tsne_embedding(X, Y, targets)
-
     # Convert to JSON string
     return json.dumps({'X': X_list, 'labels': targets, 'feature_names': feature_names,
                        'embedding': Y_list, 'P': P_list, 'Q': Q_list, 'sigma': sigma_list,
-                       'gradients': gradients.tolist(), 'tsne_scatterplot': tsne_scatter_plot.to_json()})
+                       'gradients': gradients.tolist()})
 
 
 @dash.callback(
