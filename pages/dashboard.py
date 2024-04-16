@@ -78,18 +78,18 @@ def layout():
     [State('tsne-plot', 'figure')]
 )
 def update_scatter_plot(tsne_data, click_data, figure):
-
+    
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
     if tsne_data is not None and tsne_data:
         tsne_data = json.loads(tsne_data)
-
         X = np.array(tsne_data.get('X'))
         Y = np.array(tsne_data.get('embedding'))
         targets = np.array(tsne_data.get('labels'))
-
-        fig = create_plot_tsne_embedding(X, Y, targets)
+        dataset_name = tsne_data.get('dataset_name')
+        
+        fig = create_plot_tsne_embedding(X, Y, targets, dataset_name)
 
         if triggered_component_id == 'explanation-barplot':
             if click_data is not None:

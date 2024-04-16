@@ -10,21 +10,22 @@ import plotly.graph_objects as go
 ################################
 
 
-def create_average_feature_distribution_plot(feature_names, X, idx):
+def create_average_feature_distribution_plot(features, X, idx):
+    fig = go.Figure()
 
-    df = pd.DataFrame()
-    df["feature"] = feature_names
-    df["average"] = np.mean(X[idx], axis=0)
+    fig.add_trace(go.Bar(x=np.mean(X[idx], axis=0), y=features, textposition="auto", text=features, 
+                  orientation="h", name="Combined Gradients", showlegend=False))
 
-    fig = px.histogram(df, y="feature", x="average", color="feature", labels={
-                       "average": "Average", "feature": "Feature"})
+    fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="", ticklabelposition = 'inside')
+    fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
+
+    fig.update_traces(width=1)
 
     fig.update_layout(
-        showlegend=False,
         template="simple_white",
         plot_bgcolor="rgba(0, 0, 0, 0)",
         paper_bgcolor="rgba(0, 0, 0, 0)",
-
+        margin=dict(l=0,r=0,b=0,t=0)
     )
 
     return fig
@@ -34,30 +35,45 @@ def create_average_feature_distribution_plot(feature_names, X, idx):
 ################################
 
 
-def create_plot_tsne_embedding(X, Y, targets):
+def create_plot_tsne_embedding(X, Y, targets, dataset_name):
 
     df = pd.DataFrame()
-    df["id"] = np.array([i for i in range(X.shape[0])])
-    df["class"] = np.array([str(i) for i in targets])
-    df["comp-1"] = Y[:, 0]
-    df["comp-2"] = Y[:, 1]
+    df["Id"] = np.array([i for i in range(X.shape[0])])
+    df["Comp-1"] = Y[:, 0]
+    df["Comp-2"] = Y[:, 1]
 
-    fig = px.scatter(df, x="comp-1", y="comp-2",
-                     color="class", hover_data=["id"])
+
+    if dataset_name == "countries":
+        df["Country"] = targets
+        fig = px.scatter(df, x="Comp-1", y="Comp-2",
+                         hover_name="Country", hover_data=["Id"])
+    elif dataset_name == "diabetes":
+        df["Disease Measure"] = targets
+        fig = px.scatter(df, x="Comp-1", y="Comp-2",
+                         hover_name="Disease Measure", hover_data=["Id"])
+    else:
+        df["Class"] = np.array([str(i) for i in targets])
+        df["Species"] = np.array([["Setosa", "Versicolor", "Virginica"][i] for i in targets])
+        fig = px.scatter(df, x="Comp-1", y="Comp-2",
+                        color="Class", hover_name="Species", hover_data=["Id"])
+    
     fig.update_layout(
         showlegend=False,
         yaxis_title=None,
         xaxis_title=None,
-        xaxis=dict(showticklabels=False, mirror=True),
-        yaxis=dict(showticklabels=False, mirror=True),
-        margin=dict(l=2, r=2, t=2, b=2),
+        xaxis=dict(showticklabels=False, mirror=True, ticks=""),
+        yaxis=dict(showticklabels=False, mirror=True, ticks=""),
+        margin=dict(l=0.5, r=0.5, t=0.5, b=0.5),
         template="simple_white",
         plot_bgcolor="rgba(0, 0, 0, 0)",
         paper_bgcolor="rgba(0, 0, 0, 0)",
+        hoverlabel=dict(
+            bgcolor="rgb(209, 203, 186)",
+            font_size=16,     
+        ) 
     )
 
-    fig.update_traces(
-        marker={"size": 10, "line": dict(width=2, color="DarkSlateGrey")})
+    fig.update_traces(marker={"size": 10, "line": dict(width=2, color="DarkSlateGrey")})
 
     return fig
 
@@ -79,18 +95,19 @@ def create_feature_importance_ranking_plot(gradients, features):
 
     fig = go.Figure()
 
-    fig.add_trace(go.Bar(x=mean_norms, y=features,
+    fig.add_trace(go.Bar(x=mean_norms, y=features, textposition="auto", text=features, 
                   orientation="h", showlegend=False))
 
-    fig.update_yaxes(categoryorder="total ascending", showline=True,
-                      )
-    fig.update_xaxes(ticks="outside", showline=True, 
-                     showgrid=False, )
+    fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="", ticklabelposition = 'inside')
+    fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
+
+    fig.update_traces(width=1)
 
     fig.update_layout(
         template="simple_white",
         plot_bgcolor="rgba(0, 0, 0, 0)",
         paper_bgcolor="rgba(0, 0, 0, 0)",
+        margin=dict(l=0,r=0,b=0,t=0)
     )
 
     return fig
@@ -101,18 +118,19 @@ def create_combined_gradients_plot(gradients, features, instance_idx):
 
     fig = go.Figure()
 
-    fig.add_trace(go.Bar(x=combined_magnitude, y=features,
+    fig.add_trace(go.Bar(x=combined_magnitude, y=features, textposition="auto", text=features, 
                   orientation="h", name="Combined Gradients", showlegend=False))
 
-    fig.update_yaxes(categoryorder="total ascending", showline=True,
-                      )
-    fig.update_xaxes(ticks="outside", showline=True, 
-                     showgrid=False, )
+    fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="", ticklabelposition = 'inside')
+    fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
+
+    fig.update_traces(width=1)
 
     fig.update_layout(
         template="simple_white",
         plot_bgcolor="rgba(0, 0, 0, 0)",
         paper_bgcolor="rgba(0, 0, 0, 0)",
+         margin=dict(l=0,r=0,b=0,t=0)
     )
 
     return fig

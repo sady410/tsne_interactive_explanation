@@ -1,16 +1,16 @@
+import json
+
 import dash
 import dash_bootstrap_components as dbc
-import dash
-import json
-from dash.dependencies import Input, Output, State
-from dash import dcc, html
-from tsne import compute_tsne
-from plots import create_plot_tsne_embedding
-from explainer import compute_all_gradients
-
 import numpy as np
 import pandas as pd
+from dash import dcc, html
+from dash.dependencies import Input, Output, State
 from sklearn import datasets, preprocessing
+
+from explainer import compute_all_gradients
+from plots import create_plot_tsne_embedding
+from tsne import compute_tsne
 
 
 def layout():
@@ -89,7 +89,7 @@ def run_tsne(selected_datasets, perplexity, max_iter):
         elif selected_dataset == 'countries':
             X = countries.to_numpy()[0:].astype(np.float64)
             scaler = preprocessing.StandardScaler()
-            X = scaler.fit_transform(X)
+            X = scaler.fit_transform(X) # TODO: WE SHOULD RETURN FEATURES VALUE BEFORE STANDARDIZATION
             countries_names = countries.index.to_numpy()
             feature_names = countries.columns.tolist()
             return X, countries_names, feature_names
@@ -101,20 +101,10 @@ def run_tsne(selected_datasets, perplexity, max_iter):
 
     Y, P, Q, sigma = compute_tsne(X, no_dims=2, perplexity=perplexity, max_iter=max_iter)
 
-    X_list = X.tolist()
-    targets = targets.tolist()
-    Y_list = Y.tolist()
-    P_list = P.tolist()
-    Q_list = Q.tolist()
-    sigma_list = sigma.tolist()
-
     gradients = compute_all_gradients(X, Y, P, Q, sigma)
 
-    # Convert to JSON string
-    return json.dumps({'X': X_list, 'labels': targets, 'feature_names': feature_names,
-                       'embedding': Y_list, 'P': P_list, 'Q': Q_list, 'sigma': sigma_list,
-                       'gradients': gradients.tolist()})
-
+    return json.dumps({'X': X.tolist(), 'labels': targets.tolist(), 'feature_names': feature_names,
+                       'embedding': Y.tolist(), 'gradients': gradients.tolist(), 'dataset_name': selected_datasets})
 
 @dash.callback(
     Output('url', 'pathname'),
