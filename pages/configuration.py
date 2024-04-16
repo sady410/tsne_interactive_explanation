@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from sklearn import datasets, preprocessing
 
+
 def layout():
     return html.Div([
         tsne_param_component()
@@ -75,7 +76,6 @@ def tsne_param_component():
 
 
 def run_tsne(selected_datasets, perplexity, max_iter):
-    
     def prepare_data(selected_dataset):
 
         iris = datasets.load_iris()
@@ -110,11 +110,10 @@ def run_tsne(selected_datasets, perplexity, max_iter):
 
     gradients = compute_all_gradients(X, Y, P, Q, sigma)
 
-    tsne_scatter_plot = create_plot_tsne_embedding(X, Y, targets)
-    print(type(targets), type(feature_names))
+    # Convert to JSON string
     return json.dumps({'X': X_list, 'labels': targets, 'feature_names': feature_names,
                        'embedding': Y_list, 'P': P_list, 'Q': Q_list, 'sigma': sigma_list,
-                       'gradients': gradients.tolist(), 'tsne_scatterplot': tsne_scatter_plot.to_json()})
+                       'gradients': gradients.tolist()})
 
 
 @dash.callback(
