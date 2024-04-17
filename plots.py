@@ -12,10 +12,9 @@ import plotly.graph_objects as go
 
 def create_average_feature_distribution_plot(features, X, idx):
     fig = go.Figure()
-
-    fig.add_trace(go.Bar(x=np.mean(X[idx], axis=0), y=features, textposition="auto", text=features, 
+    fig.add_trace(go.Bar(x=np.mean(X[idx], axis=0), y=features,
                   orientation="h", name="Combined Gradients", showlegend=False))
-
+    
     fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
 
@@ -126,80 +125,6 @@ def create_combined_gradients_plot(gradients, features, instance_idx):
         plot_bgcolor="rgba(0, 0, 0, 0)",
         paper_bgcolor="rgba(0, 0, 0, 0)",
          margin=dict(l=0,r=0,b=0,t=0)
-    )
-
-    return fig
-
-# def create_arrow_fields_plot(Y, scaled_gradients, features, feature_id, scale = 1):
-
-#     fig = ff.create_quiver(Y[:, 0], Y[:, 1], scaled_gradients[:, 0, feature_id], scaled_gradients[:, 1, feature_id], scale=scale)
-
-#     # fig.add_trace(go.Contour(x=df["comp-1"],y=df["comp-2"],z=np.array(activations[:, i])))
-
-#     fig.update_layout(
-#         xaxis=dict(showgrid=False, zeroline=False, mirror=True),
-#         yaxis=dict(showgrid=False, zeroline=False, mirror=True),
-#         plot_bgcolor= "rgba(0, 0, 0, 0)",
-#         paper_bgcolor= "rgba(0, 0, 0, 0)",
-#         showlegend=False,
-#         template="simple_white"
-#     )
-
-#     return fig
-
-
-def create_top_gradient_vectors_plot(gradients, Y, features, instance_id, nb_features):
-
-    combined_magnitude = np.linalg.norm(gradients[instance_id], axis=0)
-    top_features_indices = np.argsort(combined_magnitude)[-nb_features:]
-    vectors = gradients[instance_id][:, top_features_indices]
-
-    fig = go.Figure()
-
-    fig.add_trace(go.Scatter(
-        x=Y[:, 0],
-        y=Y[:, 1],
-        mode="markers",
-        marker=dict(size=7),
-        showlegend=False
-    ))
-
-    fig.add_trace(go.Scatter(
-        x=[Y[instance_id, 0]],
-        y=[Y[instance_id, 1]],
-        mode="markers",
-        marker=dict(color="crimson", size=7),
-        name="Instance " + str(instance_id),
-    ))
-
-    # Unpack vectors for plotting
-    x_endpoints = [Y[instance_id, 0] + vector[0]*20 for vector in vectors.T]
-    y_endpoints = [Y[instance_id, 1] + vector[1]*20 for vector in vectors.T]
-
-    # Choose different colors for each line
-    colors = ['yellow', 'green', 'blue', 'orange', 'purple']
-
-    for i, (x_end, y_end, feature_id) in enumerate(zip(x_endpoints, y_endpoints, top_features_indices)):
-        fig.add_trace(go.Scatter(
-            x=[Y[instance_id, 0], x_end],
-            y=[Y[instance_id, 1], y_end],
-            mode="lines",
-            line=dict(color=colors[i], width=2),
-            name=features[feature_id],
-        ))
-
-    fig.update_layout(
-        template="simple_white",
-        plot_bgcolor="rgba(0, 0, 0, 0)",
-        paper_bgcolor="rgba(0, 0, 0, 0)",
-        # legend=dict(
-        #     x=1,
-        #     y=1,
-        #     xanchor='right',
-        #     yanchor='top',
-        #     bgcolor='rgba(255, 255, 255, 0)',
-        #     bordercolor='rgba(255, 255, 255, 0)'
-        # )
     )
 
     return fig
