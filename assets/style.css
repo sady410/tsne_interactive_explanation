@@ -57,7 +57,7 @@ body {
   margin-bottom: 1rem;
 }
 
-.overflowY-scroll {
+.overflow-scroll {
   overflow: scroll;
   height: 100%;
 }

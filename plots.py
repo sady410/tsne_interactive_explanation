@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
+from css_colors_exposed import Color
 
 ################################
 ######### Other plots ##########
@@ -21,10 +22,13 @@ def create_average_feature_distribution_plot(features, X, idx):
 
     fig.update_layout(
         template="simple_white",
-        plot_bgcolor="rgba(0, 0, 0, 0)",
-        paper_bgcolor="rgba(0, 0, 0, 0)",
+        plot_bgcolor=Color.transparent.value,
+        paper_bgcolor=Color.transparent.value,
         margin=dict(l=0,r=0,b=0,t=0)
     )
+    fig.update_traces(marker={
+        "color": Color.primaryBorderSubtle.value
+    })
 
     return fig
 
@@ -63,15 +67,19 @@ def create_plot_tsne_embedding(X, Y, targets, dataset_name):
         yaxis=dict(showticklabels=False, mirror=True, ticks=""),
         margin=dict(l=0.5, r=0.5, t=0.5, b=0.5),
         template="simple_white",
-        plot_bgcolor="rgba(0, 0, 0, 0)",
-        paper_bgcolor="rgba(0, 0, 0, 0)",
+        plot_bgcolor=Color.transparent.value,
+        paper_bgcolor=Color.transparent.value,
         hoverlabel=dict(
-            bgcolor="rgb(209, 203, 186)",
+            bgcolor=Color.secondary.value,
             font_size=16,     
         ) 
     )
 
-    fig.update_traces(marker={"size": 10, "line": dict(width=2, color="DarkSlateGrey")})
+    fig.update_traces(marker={
+        "size": 10, 
+        "line": dict(width=2, color=Color.gray700.value),
+        "color": Color.primary.value
+    })
 
     return fig
 
@@ -101,10 +109,14 @@ def create_feature_importance_ranking_plot(gradients, features):
 
     fig.update_layout(
         template="simple_white",
-        plot_bgcolor="rgba(0, 0, 0, 0)",
-        paper_bgcolor="rgba(0, 0, 0, 0)",
+        plot_bgcolor=Color.transparent.value,
+        paper_bgcolor=Color.transparent.value,
         margin=dict(l=0,r=0,b=0,t=0)
     )
+
+    fig.update_traces(marker={
+        "color": Color.primaryBorderSubtle.value
+    })
 
     return fig
 
@@ -122,9 +134,13 @@ def create_combined_gradients_plot(gradients, features, instance_idx):
 
     fig.update_layout(
         template="simple_white",
-        plot_bgcolor="rgba(0, 0, 0, 0)",
-        paper_bgcolor="rgba(0, 0, 0, 0)",
+        plot_bgcolor=Color.transparent.value,
+        paper_bgcolor=Color.transparent.value,
          margin=dict(l=0,r=0,b=0,t=0)
     )
+    
+    fig.update_traces(marker={
+        "color": Color.primaryBorderSubtle.value
+    })
 
     return fig

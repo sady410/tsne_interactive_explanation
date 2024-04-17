@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 
+from css_colors_exposed import Color
 from plots import (create_average_feature_distribution_plot,
                    create_combined_gradients_plot,
                    create_feature_importance_ranking_plot,
@@ -56,7 +57,7 @@ def layout():
                 overview_card(),
             ]),
             html.Div("Feature distribution", className="section-title mt-4"),
-            html.Div(feature_distribution_plot(), className="overflowY-scroll")
+            html.Div(feature_distribution_plot(), className="overflow-scroll")
         ], className="sub-container-1"),
         html.Div([
             scatter_plot_card()
@@ -111,7 +112,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
                     'y0': y0,
                     'y1': y1,
                     'line': {
-                        'color': 'rgb(255, 0, 0)',
+                        'color': Color.danger.value,
                         'width': 2
                     }
                 })
@@ -132,7 +133,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
     Output('overview-plot', 'figure'),
     [State('overview-plot', 'figure')],
     [Input('tsne-plot', 'relayoutData'),
-     Input('tsne-plot', 'figure')],
+    Input('tsne-plot', 'figure')],
     prevent_initial_call=True
 )
 def update_overview_plot(overview_plot, relayout_data, tsne_plot):
@@ -162,8 +163,8 @@ def update_overview_plot(overview_plot, relayout_data, tsne_plot):
                 'y0': y0,
                 'y1': y1,
                 'line': {
-                    'color': 'rgba(128, 0, 128, 1)',
-                    'width': 3
+                    'color': Color.info.value,
+                    'width': 2
                 }
             })
 
@@ -212,10 +213,10 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, figur
 
     if triggered_component_id == 'explanation-barplot' and hover_data is not None:
         fig = go.Figure(figure)
-        colors = ['rgba(31, 119, 180, 0.2)' for i in range(len(fig.data[0]['x']))]
+        colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
   
         feature_id = hover_data['points'][0]['pointIndex'] 
-        colors[feature_id] = 'rgba(31, 119, 180, 1)'
+        colors[feature_id] = Color.primary.value
 
         fig.update_traces(marker=dict(color = colors))
 
