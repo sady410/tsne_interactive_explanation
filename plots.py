@@ -19,7 +19,6 @@ def create_average_feature_distribution_plot(features, X, idx):
     fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
 
-    fig.update_traces(width=2)
 
     fig.update_layout(
         template="simple_white",
@@ -101,8 +100,6 @@ def create_feature_importance_ranking_plot(gradients, features):
     fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
 
-    fig.update_traces(width=2)
-
     fig.update_layout(
         template="simple_white",
         plot_bgcolor="rgba(0, 0, 0, 0)",
@@ -123,8 +120,6 @@ def create_combined_gradients_plot(gradients, features, instance_idx):
 
     fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
-
-    fig.update_traces(width=2)
 
     fig.update_layout(
         template="simple_white",

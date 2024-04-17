@@ -54,10 +54,8 @@ def layout():
                 html.Div("Overview Plot", className="section-title"),
                 overview_card(),
             ]),
-            html.Div([
-                html.Div("Feature distribution", className="section-title mt-4"),
-                feature_distribution_plot()
-            ], className="h-100")
+            html.Div("Feature distribution", className="section-title mt-4"),
+            html.Div(feature_distribution_plot(), className="overflowY-scroll")
         ], className="sub-container-1"),
         html.Div([
             scatter_plot_card()
@@ -76,7 +74,7 @@ def layout():
     [State('tsne-plot', 'figure')]
 )
 def update_scatter_plot(tsne_data, click_data, figure):
-    
+
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -86,7 +84,7 @@ def update_scatter_plot(tsne_data, click_data, figure):
         Y = np.array(tsne_data.get('embedding'))
         targets = np.array(tsne_data.get('labels'))
         dataset_name = tsne_data.get('dataset_name')
-        
+
         fig = create_plot_tsne_embedding(X, Y, targets, dataset_name)
 
         if triggered_component_id == 'explanation-barplot':
@@ -108,18 +106,18 @@ def update_scatter_plot(tsne_data, click_data, figure):
 def update_overview_plot(overview_plot, relayout_data, tsne_plot):
     if overview_plot is not None:
         fig = overview_plot
-    else:   
+    else:
         fig = tsne_plot
-    
+
     if relayout_data is not None:
         layout = fig['layout']
         shapes = layout.get('shapes', [])
-        
+
         if 'xaxis.autorange' in relayout_data or 'xaxis.range[0]' in relayout_data:
             shapes = []
 
         if 'xaxis.range[0]' in relayout_data:
-            
+
             x0 = relayout_data['xaxis.range[0]']
             x1 = relayout_data['xaxis.range[1]']
             y0 = relayout_data['yaxis.range[0]']
@@ -136,7 +134,7 @@ def update_overview_plot(overview_plot, relayout_data, tsne_plot):
                     'width': 3
                 }
             })
-            
+
         layout['shapes'] = shapes
         fig['layout'] = layout
 
