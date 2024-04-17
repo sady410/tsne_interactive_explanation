@@ -69,7 +69,7 @@ def tsne_param_component():
                         ],
                         className="mt-3"
                     )
-                ], className="card"
+                ], className="box-container"
             )
         ], className="parameters-container mt-5"
     )
