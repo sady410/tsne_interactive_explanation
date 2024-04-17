@@ -90,7 +90,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
 
             layout = fig['layout']
             shapes = layout.get('shapes', [])
-            shapes = []         
+            shapes = [] # FIXME Is there a reason for the reassignment ? Does layout.get have side effects ? @sady410
             if 'selectedpoints'in fig['data'][0]:
                 selected_points = fig['data'][0]['selectedpoints']
             else:
@@ -115,6 +115,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
                         'width': 2
                     }
                 })
+            # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
             
             layout['shapes'] = shapes
             fig['layout'] = layout
