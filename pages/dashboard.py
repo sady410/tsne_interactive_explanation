@@ -38,15 +38,13 @@ def scatter_plot_card():
 def explanation_plot_card():
     return dcc.Graph(id='explanation-barplot',
                      config={'displayModeBar': False},
-                     className="explanation-barplot",
-                     responsive=True)
+                     className="explanation-barplot")
 
 
 def feature_distribution_plot():
     return dcc.Graph(id='feature-distribution-plot',
                      config={'displayModeBar': False},
-                     className="feature-distribution-plot",
-                     responsive=True)
+                     className="feature-distribution-plot")
 
 
 def layout():
