@@ -56,7 +56,7 @@ def layout():
                 overview_card(),
             ]),
             html.Div("Feature distribution", className="section-title mt-4"),
-            html.Div(feature_distribution_plot(), className="overflow-scroll")
+            feature_distribution_plot()
         ], className="sub-container-1"),
         html.Div([
             scatter_plot_card()
