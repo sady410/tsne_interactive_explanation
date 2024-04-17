@@ -33,8 +33,7 @@ def scatter_plot_card():
                                            'autoScale2d',
                                            'select2d']
                 },
-        className="main-plot",
-        responsive=True)
+        className="main-plot")
 
 
 def explanation_plot_card():
@@ -64,7 +63,7 @@ def layout():
         ], className="sub-container-2"),
         html.Div([
             html.Div("Explanation Plot", className="section-title"),
-            explanation_plot_card()
+            html.Div(explanation_plot_card(), className="overflow-scroll")
         ], className="sub-container-3"),
     ], className="main-container")
 

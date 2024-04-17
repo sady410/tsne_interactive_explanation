@@ -111,7 +111,8 @@ def create_feature_importance_ranking_plot(gradients, features):
         template="simple_white",
         plot_bgcolor=Color.transparent.value,
         paper_bgcolor=Color.transparent.value,
-        margin=dict(l=0,r=0,b=0,t=0)
+        margin=dict(l=0,r=0,b=0,t=0),
+        height=len(features) * 50,
     )
 
     fig.update_traces(marker={

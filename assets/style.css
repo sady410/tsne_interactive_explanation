@@ -4,7 +4,7 @@ body {
   padding: 0;
 }
 body {
-  background-color: #fcfcfc;
+  background-color: #f1f1f1;
 }
 
 .main-container {
@@ -42,12 +42,12 @@ body {
   position: relative;
   width: 100%; /* fill remaining */
   height: 100%;
+  overflow: hidden;
 
   border-right: 1px solid #e0e0e0;
   background-color: white;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   padding: 1.5rem;
-
 
 }
 
@@ -87,6 +87,7 @@ body {
 
 .explanation-barplot {
   width: 30rem;
+  padding-bottom: 3vh;
 }
 
 .page-title {
