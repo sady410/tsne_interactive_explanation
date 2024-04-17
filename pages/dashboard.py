@@ -75,7 +75,7 @@ def layout():
      Input('tsne-plot', 'selectedData')],
     [State('tsne-plot', 'figure')]
 )
-def update_scatter_plot(tsne_data, click_data, selected_data, figure):
+def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: CAN'T HOVER ON SELECTED DATA
     
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
@@ -179,7 +179,7 @@ def update_overview_plot(overview_plot, relayout_data, tsne_plot):
     [Input('tsne-data', 'data'),
      Input('tsne-plot', 'selectedData')]
 )
-def update_explanation_bar_plot(tsne_data, selected_data):
+def update_explanation_bar_plot(tsne_data, selected_data): # TODO: WHEN CLICKED HIGHLIGHT BAR
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
