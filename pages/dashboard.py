@@ -83,19 +83,22 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
     tsne_data = json.loads(tsne_data)
     Y = np.array(tsne_data.get('embedding'))
     gradients = np.array(tsne_data.get('gradients'))
-    
-    if triggered_component_id == 'explanation-barplot' or triggered_component_id == 'tsne-plot': # TODO: remove arrow when clicking on active feature
-        if click_data is not None:
-            fig = figure
 
+    if triggered_component_id == 'explanation-barplot' or triggered_component_id == 'tsne-plot': # TODO: remove arrow when clicking on active feature
+        
+        fig = figure
+        
+        if click_data is not None:
             layout = fig['layout']
             shapes = layout.get('shapes', [])
             shapes = [] # FIXME Is there a reason for the reassignment ? Does layout.get have side effects ? @sady410
             if 'selectedpoints'in fig['data'][0]:
                 selected_points = fig['data'][0]['selectedpoints']
             else:
-                selected_points = [i[0] for i in fig['data'][0]['customdata']]
-    
+                selected_points = []
+                for i in range(len(fig['data'])):
+                    selected_points += [i[0] for i in fig['data'][i]['customdata']]
+
             coordinates = Y[selected_points]
             gradients = gradients[selected_points]
 
@@ -103,7 +106,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
 
             for i in range(coordinates.shape[0]):
                 x0, y0 = coordinates[i]
-                x1, y1 = coordinates[i] + gradients[i, :, feature_id]*5
+                x1, y1 = coordinates[i] + gradients[i, :, feature_id]*5 # TODO: DETERMINE SCALING FACTOR
                 shapes.append({
                     'type': 'line',
                     'x0': x0,

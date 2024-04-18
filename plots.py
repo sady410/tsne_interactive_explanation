@@ -78,8 +78,13 @@ def create_plot_tsne_embedding(X, Y, targets, dataset_name):
     fig.update_traces(marker={
         "size": 10, 
         "line": dict(width=2, color=Color.gray700.value),
-        "color": Color.primary.value
     })
+
+    if dataset_name != "iris":
+        
+        fig.update_traces(marker={
+            "color": Color.primary.value
+        })
 
     return fig
 
