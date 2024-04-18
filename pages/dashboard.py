@@ -92,13 +92,17 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
             layout = fig['layout']
             shapes = layout.get('shapes', [])
             shapes = [] # FIXME Is there a reason for the reassignment ? Does layout.get have side effects ? @sady410
-            if 'selectedpoints'in fig['data'][0]:
-                selected_points = fig['data'][0]['selectedpoints']
+            if 'selectedpoints' in fig['data'][0]:
+                selected_points = []
+                for i in range(len(fig['data'])):
+                    points_idx = fig['data'][i]['selectedpoints']
+                    selected_points += [fig['data'][i]['customdata'][point_id][0] for point_id in points_idx]
+                    print(selected_points)
             else:
                 selected_points = []
                 for i in range(len(fig['data'])):
                     selected_points += [i[0] for i in fig['data'][i]['customdata']]
-
+            print(selected_points)
             coordinates = Y[selected_points]
             gradients = gradients[selected_points]
 
