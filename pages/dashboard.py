@@ -173,7 +173,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                             'width': 2
                         }
                     })
-                # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
+                # TODO: Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
 
                 layout['shapes'] = shapes
                 fig['layout'] = layout
