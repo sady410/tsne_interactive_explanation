@@ -286,9 +286,9 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
 
     ctx = dash.callback_context
     triggered_component_id, triggered_event = ctx.triggered[0]['prop_id'].split('.')
-    fig = go.Figure(figure)
 
     if triggered_component_id == 'explanation-barplot' and triggered_event == 'clickData':
+        fig = go.Figure(figure)
         colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
         feature_id = click_data['points'][0]['pointIndex'] 
 
@@ -298,6 +298,7 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
         fig.update_traces(marker=dict(color = colors))
         
     elif triggered_component_id == 'explanation-barplot' and triggered_event == 'hoverData':
+        fig = go.Figure(figure)
         if hover_data is not None:
             line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
             colors = fig['data'][0]['marker']['color']
@@ -312,6 +313,7 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
             fig.update_traces(marker=dict(color = colors, line=dict(color=line_colors)))
 
     else:
+
         data = json.loads(tsne_data)
         X = data.get('X')
         feature_names = data.get('feature_names')
@@ -323,8 +325,13 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
             if selected_data is not None and selected_data['points'] != []:
                 selected_indices = [point['customdata'][0]
                                     for point in selected_data['points']]
+        
         fig  = create_average_feature_distribution_plot(feature_names, X, selected_indices)
-                
+        
+        if figure is not None:
+            colors = figure['data'][0]['marker']['color']
+            fig.update_traces(marker=dict(color = colors))
+       
     return fig
 
 
