@@ -77,74 +77,109 @@ def layout():
      State('explanation-barplot', 'figure')]
 )
 def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, explanation_figure): # TODO: CAN'T HOVER ON SELECTED DATA
-    
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
     
     tsne_data = json.loads(tsne_data)
     Y = np.array(tsne_data.get('embedding'))
     
-    if triggered_component_id == 'explanation-barplot' or triggered_component_id == 'tsne-plot':
-    # TODO: FIX: There is a bug here, when no selected features vectors are still plotted
-        
-        fig = tsne_figure
-        
-        gradients = np.array(tsne_data.get('gradients'))
+    fig = tsne_figure
+    shapes = []
 
-        layout = fig['layout']
-        shapes = []
-            
-        
-        if triggered_component_id == 'explanation-barplot':
-            if explanation_figure['data'][0]['marker']['color'][click_data['points'][0]['pointIndex']] == Color.primary.value:
-                layout['shapes'] = shapes
-                fig['layout'] = layout
-                return fig
-
-        if 'selectedpoints' in fig['data'][0]:
-            selected_points = []
-            for i in range(len(fig['data'])):
-                points_idx = fig['data'][i]['selectedpoints']
-                selected_points += [fig['data'][i]['customdata'][point_id][0] for point_id in points_idx]
-        else:
-            selected_points = []
-            for i in range(len(fig['data'])):
-                selected_points += [i[0] for i in fig['data'][i]['customdata']]
-
-        if click_data is not None:
-            coordinates = Y[selected_points]
-            gradients = gradients[selected_points]
-
-            feature_id = click_data['points'][0]['pointIndex']
-
-            for i in range(coordinates.shape[0]):
-                x0, y0 = coordinates[i]
-                x1, y1 = coordinates[i] + gradients[i, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
-                shapes.append({
-                    'type': 'line',
-                    'x0': x0,
-                    'x1': x1,
-                    'y0': y0,
-                    'y1': y1,
-                    'line': {
-                        'color': Color.danger.value,
-                        'width': 2
-                    }
-                })
-            # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
-            
-        layout['shapes'] = shapes
-        fig['layout'] = layout
-
-    else:
-        
+    if fig is None:
         X = np.array(tsne_data.get('X'))
         targets = np.array(tsne_data.get('labels'))
         dataset_name = tsne_data.get('dataset_name')
+        return create_plot_tsne_embedding(X, Y, targets, dataset_name)
+    else:
+        if triggered_component_id == 'explanation-barplot':
+            layout = fig['layout']
+            
+            if explanation_figure['data'][0]['marker']['color'][click_data['points'][0]['pointIndex']] == Color.primary.value: 
+                layout['shapes'] = shapes
+                fig['layout'] = layout
+                return fig
+            else:
+                
 
-        fig = create_plot_tsne_embedding(X, Y, targets, dataset_name)
+                if 'selectedpoints' in fig['data'][0]:
+                    selected_points = []
+                    for i in range(len(fig['data'])):
+                        points_idx = fig['data'][i]['selectedpoints']
+                        selected_points += [fig['data'][i]['customdata'][point_id][0] for point_id in points_idx]
+                else:
+                    selected_points = []
+                    for i in range(len(fig['data'])):
+                        selected_points += [i[0] for i in fig['data'][i]['customdata']]
 
-    return fig
+                coordinates = Y[selected_points]
+                gradients = np.array(tsne_data.get('gradients'))
+
+                feature_id = click_data['points'][0]['pointIndex']
+
+                for i in range(coordinates.shape[0]):
+                    x0, y0 = coordinates[i]
+                    x1, y1 = coordinates[i] + gradients[i, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
+                    shapes.append({
+                        'type': 'line',
+                        'x0': x0,
+                        'x1': x1,
+                        'y0': y0,
+                        'y1': y1,
+                        'line': {
+                            'color': Color.danger.value,
+                            'width': 2
+                        }
+                    })
+                # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
+
+                layout['shapes'] = shapes
+                fig['layout'] = layout
+                return fig
+        elif triggered_component_id == 'tsne-plot':
+
+            layout = fig['layout']
+            
+            if Color.primary.value not in explanation_figure['data'][0]['marker']['color']: # no selected feature
+                layout['shapes'] = shapes
+                fig['layout'] = layout
+                return fig
+            else:
+                if selected_data is None:
+                    selected_points = [i for i in range(len(Y))]
+                elif selected_data['points'] == []:
+                    layout['shapes'] = shapes
+                    fig['layout'] = layout
+                    return fig
+                else:
+                    selected_points = [selected_data['points'][i]['customdata'][0] for i in range(len(selected_data['points']))]
+
+                coordinates = Y[selected_points]
+                gradients = np.array(tsne_data.get('gradients'))
+
+                feature_id = explanation_figure['data'][0]['marker']['color'].index(Color.primary.value)
+
+                for i in range(coordinates.shape[0]):
+                    x0, y0 = coordinates[i]
+                    x1, y1 = coordinates[i] + gradients[i, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
+                    shapes.append({
+                        'type': 'line',
+                        'x0': x0,
+                        'x1': x1,
+                        'y0': y0,
+                        'y1': y1,
+                        'line': {
+                            'color': Color.danger.value,
+                            'width': 2
+                        }
+                    })
+                # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
+
+                layout['shapes'] = shapes
+                fig['layout'] = layout
+                return fig
+        else:
+            return fig
 
 @dash.callback(
     Output('overview-plot', 'figure'),
