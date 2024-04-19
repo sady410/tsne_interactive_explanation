@@ -33,9 +33,10 @@ def tsne_param_component():
                                 options=[
                                     {'label': 'Iris', 'value': 'iris'},
                                     {'label': 'Diabetes', 'value': 'diabetes'},
-                                    {'label': 'Countries', 'value': 'countries'}
+                                    {'label': 'Countries', 'value': 'countries'},
+                                    {'label': 'Zoo', 'value': 'zoo'}
                                 ],
-                                value='countries',
+                                value='iris',
                                 multi=False,
                                 className=""
                             ),
@@ -78,27 +79,33 @@ def tsne_param_component():
 def run_tsne(selected_datasets, perplexity, max_iter):
     def prepare_data(selected_dataset):
 
-        iris = datasets.load_iris()
-        diabetes = datasets.load_diabetes()
-        countries = pd.read_csv("datasets/country_dataset_with_names.csv", index_col = 0)
-
         if selected_dataset == 'iris':
+            iris = datasets.load_iris()
             return iris.data, iris.target, iris.feature_names
-        elif selected_dataset == 'diabetes':
+        elif selected_dataset == 'diabetes': 
+            diabetes = datasets.load_diabetes()
             return diabetes.data, diabetes.target, diabetes.feature_names
         elif selected_dataset == 'countries':
+            countries = pd.read_csv("datasets/country_dataset_with_names.csv", index_col = 0)
             X = countries.to_numpy()[0:].astype(np.float64)
             scaler = preprocessing.StandardScaler()
             X = scaler.fit_transform(X) # TODO: WE SHOULD RETURN FEATURES VALUE BEFORE STANDARDIZATION
             countries_names = countries.index.to_numpy()
             feature_names = countries.columns.tolist()
             return X, countries_names, feature_names
+        elif selected_dataset == 'zoo':
+            zoo = pd.read_csv("datasets/zoo.csv", index_col = 0)
+            del zoo['class_type']
+            X = zoo.to_numpy()[0:].astype(np.float64)
+            animal_names = zoo.index.to_numpy()
+            feature_names = zoo.columns.tolist()
+            return X, animal_names, feature_names # TODO: Return class_names ?
 
     if len(selected_datasets) == 0:
         return json.dumps({})
 
     X, targets, feature_names = prepare_data(selected_datasets)
-
+    
     Y, P, Q, sigma = compute_tsne(X, no_dims=2, perplexity=perplexity, max_iter=max_iter)
 
     gradients = compute_all_gradients(X, Y, P, Q, sigma)

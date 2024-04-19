@@ -73,36 +73,45 @@ def layout():
     [Input('tsne-data', 'data'),
      Input('explanation-barplot', 'clickData'),
      Input('tsne-plot', 'selectedData')],
-    [State('tsne-plot', 'figure')]
+    [State('tsne-plot', 'figure'),
+     State('explanation-barplot', 'figure')]
 )
-def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: CAN'T HOVER ON SELECTED DATA
+def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, explanation_figure): # TODO: CAN'T HOVER ON SELECTED DATA
     
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
+    
     tsne_data = json.loads(tsne_data)
     Y = np.array(tsne_data.get('embedding'))
-    gradients = np.array(tsne_data.get('gradients'))
+    
+    if triggered_component_id == 'explanation-barplot' or triggered_component_id == 'tsne-plot':
+    # TODO: FIX: There is a bug here, when no selected features vectors are still plotted
+        
+        fig = tsne_figure
+        
+        gradients = np.array(tsne_data.get('gradients'))
 
-    if triggered_component_id == 'explanation-barplot' or triggered_component_id == 'tsne-plot': # TODO: remove arrow when clicking on active feature
+        layout = fig['layout']
+        shapes = []
+            
         
-        fig = figure
-        
+        if triggered_component_id == 'explanation-barplot':
+            if explanation_figure['data'][0]['marker']['color'][click_data['points'][0]['pointIndex']] == Color.primary.value:
+                layout['shapes'] = shapes
+                fig['layout'] = layout
+                return fig
+
+        if 'selectedpoints' in fig['data'][0]:
+            selected_points = []
+            for i in range(len(fig['data'])):
+                points_idx = fig['data'][i]['selectedpoints']
+                selected_points += [fig['data'][i]['customdata'][point_id][0] for point_id in points_idx]
+        else:
+            selected_points = []
+            for i in range(len(fig['data'])):
+                selected_points += [i[0] for i in fig['data'][i]['customdata']]
+
         if click_data is not None:
-            layout = fig['layout']
-            shapes = layout.get('shapes', [])
-            shapes = [] # FIXME Is there a reason for the reassignment ? Does layout.get have side effects ? @sady410
-            if 'selectedpoints' in fig['data'][0]:
-                selected_points = []
-                for i in range(len(fig['data'])):
-                    points_idx = fig['data'][i]['selectedpoints']
-                    selected_points += [fig['data'][i]['customdata'][point_id][0] for point_id in points_idx]
-                    print(selected_points)
-            else:
-                selected_points = []
-                for i in range(len(fig['data'])):
-                    selected_points += [i[0] for i in fig['data'][i]['customdata']]
-            print(selected_points)
             coordinates = Y[selected_points]
             gradients = gradients[selected_points]
 
@@ -110,7 +119,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
 
             for i in range(coordinates.shape[0]):
                 x0, y0 = coordinates[i]
-                x1, y1 = coordinates[i] + gradients[i, :, feature_id]*5 # TODO: DETERMINE SCALING FACTOR
+                x1, y1 = coordinates[i] + gradients[i, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
                 shapes.append({
                     'type': 'line',
                     'x0': x0,
@@ -124,10 +133,11 @@ def update_scatter_plot(tsne_data, click_data, selected_data, figure): # TODO: C
                 })
             # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
             
-            layout['shapes'] = shapes
-            fig['layout'] = layout
+        layout['shapes'] = shapes
+        fig['layout'] = layout
 
     else:
+        
         X = np.array(tsne_data.get('X'))
         targets = np.array(tsne_data.get('labels'))
         dataset_name = tsne_data.get('dataset_name')
@@ -185,48 +195,84 @@ def update_overview_plot(overview_plot, relayout_data, tsne_plot):
 @dash.callback(
     Output('explanation-barplot', 'figure'),
     [Input('tsne-data', 'data'),
-     Input('tsne-plot', 'selectedData')]
+     Input('tsne-plot', 'selectedData'),
+     Input('explanation-barplot', 'clickData'),
+     State('explanation-barplot', 'figure')]
 )
-def update_explanation_bar_plot(tsne_data, selected_data): # TODO: WHEN CLICKED HIGHLIGHT BAR
+def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure):
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
-    if tsne_data is not None and tsne_data:
-        gradients_data = json.loads(tsne_data)
-        gradients = gradients_data.get('gradients')
-        feature_names = gradients_data.get('feature_names')
-        gradients = np.array(gradients)
+    
+    gradients_data = json.loads(tsne_data)
+    gradients = gradients_data.get('gradients')
+    feature_names = gradients_data.get('feature_names')
+    gradients = np.array(gradients)
+    fig = figure
+    if triggered_component_id == 'tsne-plot':
+        if selected_data is not None and selected_data['points'] != []:
+            selected_indices = [point['customdata'][0]
+                                for point in selected_data['points']]
+            colors = fig['data'][0]['marker']['color']
+            fig = create_combined_gradients_plot(gradients, feature_names, selected_indices[0])
+            
+            fig.update_traces(marker=dict(color = colors))
+        else:
+            colors = fig['data'][0]['marker']['color']
+            fig = create_feature_importance_ranking_plot(gradients, feature_names)
+            fig.update_traces(marker=dict(color = colors))
+    elif triggered_component_id == 'explanation-barplot':
+        fig = go.Figure(figure)
 
-        if triggered_component_id == 'tsne-plot':
-            if selected_data is not None and selected_data['points'] != []:
-                selected_indices = [point['customdata'][0]
-                                    for point in selected_data['points']]
-                return create_combined_gradients_plot(gradients, feature_names, selected_indices[0])
+        colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
+        feature_id = click_data['points'][0]['pointIndex'] 
+        
+        if fig['data'][0]['marker']['color'][feature_id] != Color.primary.value:
+            colors[feature_id] = Color.primary.value
+        
+        fig.update_traces(marker=dict(color = colors))
 
-        return create_feature_importance_ranking_plot(gradients, feature_names)
-    return {}
+    else:
+        fig = create_feature_importance_ranking_plot(gradients, feature_names)
+    
+    return fig
 
 
 @dash.callback(
     Output('feature-distribution-plot', 'figure'),
     [Input('tsne-data', 'data'),
      Input('tsne-plot', 'selectedData'),
-     Input('explanation-barplot', 'hoverData')],
+     Input('explanation-barplot', 'hoverData'),
+     Input('explanation-barplot', 'clickData')],
     [State('feature-distribution-plot', 'figure')]
 )
-def update_feature_distribution_plot(tsne_data, selected_data, hover_data, figure):
+def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click_data, figure):
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    fig = go.Figure(figure)
+    if triggered_component_id == 'explanation-barplot': # TODO: FULL BUG
+        
+        if hover_data is not None:
+        
+            line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
+            colors = fig['data'][0]['marker']['color']
+            # print(colors)
+            feature_id = hover_data['points'][0]['pointIndex'] 
+            line_colors[feature_id] = Color.secondary.value
 
-    if triggered_component_id == 'explanation-barplot' and hover_data is not None:
-        fig = go.Figure(figure)
-        colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
-  
-        feature_id = hover_data['points'][0]['pointIndex'] 
-        colors[feature_id] = Color.primary.value
+            fig.update_traces(marker=dict(color = colors, line=dict(width=2,
+                                        color=line_colors)))
 
-        fig.update_traces(marker=dict(color = colors))
+        elif click_data is not None:
 
+            colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
+    
+            feature_id = click_data['points'][0]['pointIndex'] 
+            
+            if fig['data'][0]['marker']['color'][feature_id] != Color.primary.value:
+                colors[feature_id] = Color.primary.value
+                
+            fig.update_traces(marker=dict(color = colors))
     else:
         data = json.loads(tsne_data)
         X = data.get('X')
@@ -235,7 +281,7 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, figur
 
         selected_indices = [i for i in range(X.shape[0])]
 
-        if triggered_component_id == 'tsne-plot':
+        if triggered_component_id == 'tsne-plot' or triggered_component_id == 'explanation-barplot':
             if selected_data is not None and selected_data['points'] != []:
                 selected_indices = [point['customdata'][0]
                                     for point in selected_data['points']]

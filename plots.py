@@ -27,7 +27,7 @@ def create_average_feature_distribution_plot(features, X, idx):
         margin=dict(l=0,r=0,b=0,t=0)
     )
     fig.update_traces(marker={
-        "color": Color.primaryBorderSubtle.value
+        "color": [Color.primaryBorderSubtle.value for _ in range(len(features))]
     })
 
     return fig
@@ -53,6 +53,10 @@ def create_plot_tsne_embedding(X, Y, targets, dataset_name):
         df["Disease Measure"] = targets
         fig = px.scatter(df, x="Comp-1", y="Comp-2",
                          hover_name="Disease Measure", hover_data=["Id"])
+    elif dataset_name == "zoo":
+        df["Animal"] = targets
+        fig = px.scatter(df, x="Comp-1", y="Comp-2",
+                         hover_name="Animal", hover_data=["Id"])
     else:
         df["Class"] = np.array([str(i) for i in targets])
         df["Species"] = np.array([["Setosa", "Versicolor", "Virginica"][i] for i in targets])
@@ -121,7 +125,7 @@ def create_feature_importance_ranking_plot(gradients, features):
     )
 
     fig.update_traces(marker={
-        "color": Color.primaryBorderSubtle.value
+        "color": [Color.primaryBorderSubtle.value for _ in range(len(features))]
     })
 
     return fig
@@ -146,7 +150,7 @@ def create_combined_gradients_plot(gradients, features, instance_idx):
     )
     
     fig.update_traces(marker={
-        "color": Color.primaryBorderSubtle.value
+        "color": [Color.primaryBorderSubtle.value for _ in range(len(features))]
     })
 
     return fig
