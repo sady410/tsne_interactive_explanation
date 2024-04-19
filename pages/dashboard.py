@@ -181,6 +181,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
         else:
             return fig
 
+
 @dash.callback(
     Output('overview-plot', 'figure'),
     [State('overview-plot', 'figure')],
@@ -282,32 +283,34 @@ def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure):
     [State('feature-distribution-plot', 'figure')]
 )
 def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click_data, figure):
+
     ctx = dash.callback_context
-    triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    triggered_component_id, triggered_event = ctx.triggered[0]['prop_id'].split('.')
     fig = go.Figure(figure)
-    if triggered_component_id == 'explanation-barplot': # TODO: FULL BUG
+
+    if triggered_component_id == 'explanation-barplot' and triggered_event == 'clickData':
+        colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
+        feature_id = click_data['points'][0]['pointIndex'] 
+
+        if fig['data'][0]['marker']['color'][feature_id] != Color.primary.value:
+            colors[feature_id] = Color.primary.value
+            
+        fig.update_traces(marker=dict(color = colors))
         
+    elif triggered_component_id == 'explanation-barplot' and triggered_event == 'hoverData':
         if hover_data is not None:
-        
             line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
             colors = fig['data'][0]['marker']['color']
-            # print(colors)
             feature_id = hover_data['points'][0]['pointIndex'] 
             line_colors[feature_id] = Color.secondary.value
 
             fig.update_traces(marker=dict(color = colors, line=dict(width=2,
                                         color=line_colors)))
+        elif hover_data is None:
+            line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
+            colors = fig['data'][0]['marker']['color']
+            fig.update_traces(marker=dict(color = colors, line=dict(color=line_colors)))
 
-        elif click_data is not None:
-
-            colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
-    
-            feature_id = click_data['points'][0]['pointIndex'] 
-            
-            if fig['data'][0]['marker']['color'][feature_id] != Color.primary.value:
-                colors[feature_id] = Color.primary.value
-                
-            fig.update_traces(marker=dict(color = colors))
     else:
         data = json.loads(tsne_data)
         X = data.get('X')
