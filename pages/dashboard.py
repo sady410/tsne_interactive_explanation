@@ -295,33 +295,22 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
     ctx = dash.callback_context
     triggered_component_id, triggered_event = ctx.triggered[0]['prop_id'].split('.')
     title = title
-    if triggered_component_id == 'explanation-barplot' and triggered_event == 'clickData':
+
+    if triggered_component_id == 'explanation-barplot' and triggered_event in ['clickData', 'hoverData']:
         fig = go.Figure(figure)
         colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
         line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
-        feature_id = click_data['points'][0]['pointIndex'] 
 
-        if fig['data'][0]['marker']['color'][feature_id] != Color.primary.value:
-            colors[feature_id] = Color.primary.value
-            line_colors[feature_id] = Color.primary.value
-        
-        fig.update_traces(marker=dict(color = colors, line=dict(width=2, color=line_colors)))
-         
-        
-    elif triggered_component_id == 'explanation-barplot' and triggered_event == 'hoverData':
-
-        fig = go.Figure(figure)
-        line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
-        colors = fig['data'][0]['marker']['color']
         if hover_data is not None:
             feature_id = hover_data['points'][0]['pointIndex'] 
             line_colors[feature_id] = Color.primary.value
 
         if click_data is not None:
-            feature_id_clicked = click_data['points'][0]['pointIndex'] 
-            line_colors[feature_id_clicked] = Color.primary.value
+            feature_id = click_data['points'][0]['pointIndex'] 
+            colors[feature_id] = Color.primary.value
+            line_colors[feature_id] = Color.primary.value
         
-        fig.update_traces(marker=dict(color = colors, line=dict(color=line_colors, width=2)))
+        fig.update_traces(marker=dict(color = colors, line=dict(color=line_colors, width=3)))
 
     else:
         data = json.loads(tsne_data)
@@ -342,8 +331,7 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
         fig  = create_average_feature_distribution_plot(feature_names, X, selected_indices)
         
         if figure is not None:
-            colors = figure['data'][0]['marker']['color']
-            fig.update_traces(marker=dict(color = colors))
+            fig.update_traces(marker=figure['data'][0]['marker'])
        
     return fig, title
 

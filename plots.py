@@ -27,7 +27,8 @@ def create_average_feature_distribution_plot(features, X, idx):
         margin=dict(l=0,r=0,b=0,t=0)
     )
     fig.update_traces(marker={
-        "color": [Color.primaryBorderSubtle.value for _ in range(len(features))]
+        "color": [Color.primaryBorderSubtle.value for _ in range(len(features))],
+        "line": dict(width=3, color=Color.primaryBorderSubtle.value),
     })
 
     return fig
