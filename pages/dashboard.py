@@ -52,17 +52,17 @@ def layout():
     return html.Div([
         html.Div([
             html.Div([
-                html.Div("Overview Plot", className="section-title"),
+                html.Div("t-SNE Overview", className="section-title"),
                 overview_card(),
             ]),
-            html.Div("Feature distribution", className="section-title mt-4"),
+            html.Div("Global Average Feature Distribution", id="feature-distribution-plot-title", className="section-title mt-4"),
             feature_distribution_plot()
         ], className="sub-container-1"),
         html.Div([
             scatter_plot_card()
         ], className="sub-container-2"),
         html.Div([
-            html.Div("Explanation Plot", className="section-title"),
+            html.Div("Global Feature Importance", id="explanation-barplot-title", className="section-title"),
             html.Div(explanation_plot_card(), className="overflow-scroll")
         ], className="sub-container-3"),
     ], className="main-container")
@@ -230,6 +230,7 @@ def update_overview_plot(overview_plot, relayout_data, tsne_plot):
 
 @dash.callback(
     Output('explanation-barplot', 'figure'),
+    Output('explanation-barplot-title', 'children'),
     [Input('tsne-data', 'data'),
      Input('tsne-plot', 'selectedData'),
      Input('explanation-barplot', 'clickData'),
@@ -245,6 +246,7 @@ def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure):
     feature_names = gradients_data.get('feature_names')
     gradients = np.array(gradients)
     fig = figure
+    
     if triggered_component_id == 'tsne-plot':
         if selected_data is not None and selected_data['points'] != []:
             selected_indices = [point['customdata'][0]
@@ -253,10 +255,12 @@ def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure):
             fig = create_combined_gradients_plot(gradients, feature_names, selected_indices[0])
             
             fig.update_traces(marker=dict(color = colors))
+            title = "Feature Importance for Selected Points"
         else:
             colors = fig['data'][0]['marker']['color']
             fig = create_feature_importance_ranking_plot(gradients, feature_names)
             fig.update_traces(marker=dict(color = colors))
+            title = "Global Feature Importance"
     elif triggered_component_id == 'explanation-barplot':
         fig = go.Figure(figure)
 
@@ -267,26 +271,29 @@ def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure):
             colors[feature_id] = Color.primary.value
         
         fig.update_traces(marker=dict(color = colors))
-
+        title = "Feature Importance for Selected Points"
     else:
         fig = create_feature_importance_ranking_plot(gradients, feature_names)
+        title = "Global Feature Importance"
     
-    return fig
+    return fig, title
 
 
 @dash.callback(
     Output('feature-distribution-plot', 'figure'),
+    Output('feature-distribution-plot-title', 'children'),
     [Input('tsne-data', 'data'),
      Input('tsne-plot', 'selectedData'),
      Input('explanation-barplot', 'hoverData'),
      Input('explanation-barplot', 'clickData')],
-    [State('feature-distribution-plot', 'figure')]
+    [State('feature-distribution-plot', 'figure'),
+     State('feature-distribution-plot-title', 'children')]
 )
-def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click_data, figure):
+def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click_data, figure, title):
 
     ctx = dash.callback_context
     triggered_component_id, triggered_event = ctx.triggered[0]['prop_id'].split('.')
-
+    title = title
     if triggered_component_id == 'explanation-barplot' and triggered_event == 'clickData':
         fig = go.Figure(figure)
         colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
@@ -313,7 +320,6 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
             fig.update_traces(marker=dict(color = colors, line=dict(color=line_colors)))
 
     else:
-
         data = json.loads(tsne_data)
         X = data.get('X')
         feature_names = data.get('feature_names')
@@ -323,8 +329,11 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
 
         if triggered_component_id == 'tsne-plot' or triggered_component_id == 'explanation-barplot':
             if selected_data is not None and selected_data['points'] != []:
+                title = "Average Feature Distribution for Selected Points"
                 selected_indices = [point['customdata'][0]
                                     for point in selected_data['points']]
+            else:
+                title = "Global Average Feature Distribution"
         
         fig  = create_average_feature_distribution_plot(feature_names, X, selected_indices)
         
@@ -332,7 +341,7 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
             colors = figure['data'][0]['marker']['color']
             fig.update_traces(marker=dict(color = colors))
        
-    return fig
+    return fig, title
 
 
 dash.register_page(__name__)
