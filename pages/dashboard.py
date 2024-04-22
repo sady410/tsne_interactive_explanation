@@ -97,12 +97,13 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
             layout = fig['layout']
             
             if explanation_figure['data'][0]['marker']['color'][click_data['points'][0]['pointIndex']] == Color.primary.value: 
+                
                 layout['shapes'] = shapes
                 fig['layout'] = layout
+                
                 return fig
             else:
-                
-
+                         
                 if 'selectedpoints' in fig['data'][0]:
                     selected_points = []
                     for i in range(len(fig['data'])):
@@ -131,7 +132,8 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                         'line': {
                             'color': Color.danger.value,
                             'width': 2
-                        }
+                        },
+                        'opacity': 0.8
                     })
                 # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
 
@@ -174,7 +176,8 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                         'line': {
                             'color': Color.danger.value,
                             'width': 2
-                        }
+                        },
+                        'opacity': 0.8
                     })
                 # TODO: Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
 

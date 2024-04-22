@@ -89,7 +89,7 @@ def run_tsne(selected_datasets, perplexity, max_iter):
             countries = pd.read_csv("datasets/country_dataset_with_names.csv", index_col = 0)
             X = countries.to_numpy()[0:].astype(np.float64)
             scaler = preprocessing.StandardScaler()
-            X = scaler.fit_transform(X) # TODO: WE SHOULD RETURN FEATURES VALUE BEFORE STANDARDIZATION
+            X = scaler.fit_transform(X)
             countries_names = countries.index.to_numpy()
             feature_names = countries.columns.tolist()
             return X, countries_names, feature_names
@@ -99,7 +99,7 @@ def run_tsne(selected_datasets, perplexity, max_iter):
             X = zoo.to_numpy()[0:].astype(np.float64)
             animal_names = zoo.index.to_numpy()
             feature_names = zoo.columns.tolist()
-            return X, animal_names, feature_names # TODO: Return class_names ?
+            return X, animal_names, feature_names
 
     if len(selected_datasets) == 0:
         return json.dumps({})
