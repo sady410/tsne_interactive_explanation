@@ -16,7 +16,7 @@ def create_average_feature_distribution_plot(features, X, idx):
     fig.add_trace(go.Bar(x=np.mean(X[idx], axis=0), y=features,
                   orientation="h", name="Combined Gradients", showlegend=False))
     
-    fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="")
+    fig.update_yaxes(showticklabels=False, showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
 
 
@@ -113,7 +113,7 @@ def create_feature_importance_ranking_plot(gradients, features):
     fig.add_trace(go.Bar(x=mean_norms, y=features, textposition="auto", text=features, 
                   orientation="h", showlegend=False))
 
-    fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="")
+    fig.update_yaxes(showticklabels=False, showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
 
     fig.update_layout(
@@ -139,7 +139,7 @@ def create_combined_gradients_plot(gradients, features, instance_idx):
     fig.add_trace(go.Bar(x=combined_magnitude, y=features, textposition="auto", text=features, 
                   orientation="h", name="Combined Gradients", showlegend=False))
 
-    fig.update_yaxes(showticklabels=False, categoryorder="total ascending", showline=True, ticks="")
+    fig.update_yaxes(showticklabels=False, showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
 
     fig.update_layout(
