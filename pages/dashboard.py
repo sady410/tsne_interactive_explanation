@@ -1,4 +1,5 @@
 import json
+from turtle import width
 
 import dash
 import dash_bootstrap_components as dbc
@@ -290,27 +291,30 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
     if triggered_component_id == 'explanation-barplot' and triggered_event == 'clickData':
         fig = go.Figure(figure)
         colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
+        line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
         feature_id = click_data['points'][0]['pointIndex'] 
 
         if fig['data'][0]['marker']['color'][feature_id] != Color.primary.value:
             colors[feature_id] = Color.primary.value
-            
-        fig.update_traces(marker=dict(color = colors))
+            line_colors[feature_id] = Color.primary.value
+        
+        fig.update_traces(marker=dict(color = colors, line=dict(width=2, color=line_colors)))
+         
         
     elif triggered_component_id == 'explanation-barplot' and triggered_event == 'hoverData':
-        fig = go.Figure(figure)
-        if hover_data is not None:
-            line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
-            colors = fig['data'][0]['marker']['color']
-            feature_id = hover_data['points'][0]['pointIndex'] 
-            line_colors[feature_id] = Color.secondary.value
 
-            fig.update_traces(marker=dict(color = colors, line=dict(width=2,
-                                        color=line_colors)))
-        elif hover_data is None:
-            line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
-            colors = fig['data'][0]['marker']['color']
-            fig.update_traces(marker=dict(color = colors, line=dict(color=line_colors)))
+        fig = go.Figure(figure)
+        line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
+        colors = fig['data'][0]['marker']['color']
+        if hover_data is not None:
+            feature_id = hover_data['points'][0]['pointIndex'] 
+            line_colors[feature_id] = Color.primary.value
+
+        if click_data is not None:
+            feature_id_clicked = click_data['points'][0]['pointIndex'] 
+            line_colors[feature_id_clicked] = Color.primary.value
+        
+        fig.update_traces(marker=dict(color = colors, line=dict(color=line_colors, width=2)))
 
     else:
 
