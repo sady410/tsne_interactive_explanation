@@ -119,8 +119,9 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                 feature_id = click_data['points'][0]['pointIndex']
 
                 for i in range(coordinates.shape[0]):
+                    point_id = selected_points[i]
                     x0, y0 = coordinates[i]
-                    x1, y1 = coordinates[i] + gradients[i, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
+                    x1, y1 = coordinates[i] + gradients[point_id, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
                     shapes.append({
                         'type': 'line',
                         'x0': x0,
@@ -161,8 +162,9 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                 feature_id = explanation_figure['data'][0]['marker']['color'].index(Color.primary.value)
 
                 for i in range(coordinates.shape[0]):
+                    point_id = selected_points[i]
                     x0, y0 = coordinates[i]
-                    x1, y1 = coordinates[i] + gradients[i, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
+                    x1, y1 = coordinates[i] + gradients[point_id, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
                     shapes.append({
                         'type': 'line',
                         'x0': x0,
