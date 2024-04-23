@@ -83,27 +83,28 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
     
     tsne_data = json.loads(tsne_data)
     Y = np.array(tsne_data.get('embedding'))
-    
+    X = np.array(tsne_data.get('X'))
+
     fig = tsne_figure
     shapes = []
-
+    
     if fig is None:
-        X = np.array(tsne_data.get('X'))
         targets = np.array(tsne_data.get('labels'))
         dataset_name = tsne_data.get('dataset_name')
         return create_plot_tsne_embedding(X, Y, targets, dataset_name)
     else:
         if triggered_component_id == 'explanation-barplot':
             layout = fig['layout']
-            
+            if len(fig["data"]) == 4:
+                fig["data"].pop(3) # remove contour plot
             if explanation_figure['data'][0]['marker']['color'][click_data['points'][0]['pointIndex']] == Color.primary.value: 
                 
                 layout['shapes'] = shapes
                 fig['layout'] = layout
-                
+
                 return fig
             else:
-                         
+                
                 if 'selectedpoints' in fig['data'][0]:
                     selected_points = []
                     for i in range(len(fig['data'])):
@@ -111,7 +112,9 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                         selected_points += [fig['data'][i]['customdata'][point_id][0] for point_id in points_idx]
                 else:
                     selected_points = []
-                    for i in range(len(fig['data'])):
+                    for i in range(len(fig['data'])-1):
+                        print(i)
+                        print(fig['data'][i])
                         selected_points += [i[0] for i in fig['data'][i]['customdata']]
 
                 coordinates = Y[selected_points]
@@ -139,6 +142,11 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
 
                 layout['shapes'] = shapes
                 fig['layout'] = layout
+                
+                fig = go.Figure(fig)
+                
+                fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id])))
+
                 return fig
         elif triggered_component_id == 'tsne-plot':
 
