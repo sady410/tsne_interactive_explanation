@@ -86,36 +86,31 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
     X = np.array(tsne_data.get('X'))
 
     fig = tsne_figure
-    shapes = []
     
     if fig is None:
         targets = np.array(tsne_data.get('labels'))
         dataset_name = tsne_data.get('dataset_name')
         return create_plot_tsne_embedding(X, Y, targets, dataset_name)
     else:
+        fig = go.Figure(tsne_figure)
+        shapes = []
+        nb_classes = tsne_data.get('nb_classes')
         if triggered_component_id == 'explanation-barplot':
-            layout = fig['layout']
-            if len(fig["data"]) == 4:
-                fig["data"].pop(3) # remove contour plot
+            if len(fig["data"]) == nb_classes+1: # TODO: MAKE THIS GENERIC
+                new_data = list(fig["data"])
+                new_data.pop(nb_classes) # remove contour plot
+                fig["data"] = new_data
             if explanation_figure['data'][0]['marker']['color'][click_data['points'][0]['pointIndex']] == Color.primary.value: 
-                
-                layout['shapes'] = shapes
-                fig['layout'] = layout
-
+                fig['layout']['shapes'] = shapes
                 return fig
             else:
-                
-                if 'selectedpoints' in fig['data'][0]:
-                    selected_points = []
-                    for i in range(len(fig['data'])):
-                        points_idx = fig['data'][i]['selectedpoints']
-                        selected_points += [fig['data'][i]['customdata'][point_id][0] for point_id in points_idx]
-                else:
-                    selected_points = []
-                    for i in range(len(fig['data'])-1):
-                        print(i)
-                        print(fig['data'][i])
-                        selected_points += [i[0] for i in fig['data'][i]['customdata']]
+                selected_points = []
+                for i in range(len(fig['data'])):
+                    if fig['data'][i]['selectedpoints'] is not None:
+                        point_idx = fig['data'][i]['selectedpoints']
+                        selected_points += [fig['data'][i]['customdata'][point_id][0] for point_id in point_idx]
+                    else:
+                        selected_points += [j[0] for j in fig['data'][i]['customdata']]
 
                 coordinates = Y[selected_points]
                 gradients = np.array(tsne_data.get('gradients'))
@@ -126,6 +121,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                     point_id = selected_points[i]
                     x0, y0 = coordinates[i]
                     x1, y1 = coordinates[i] + gradients[point_id, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
+                      
                     shapes.append({
                         'type': 'line',
                         'x0': x0,
@@ -139,16 +135,11 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                         'opacity': 0.8
                     })
                 # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
-
-                layout['shapes'] = shapes
-                fig['layout'] = layout
-                
-                fig = go.Figure(fig)
-                
+                fig['layout']["shapes"] = shapes
                 fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id])))
 
                 return fig
-        elif triggered_component_id == 'tsne-plot':
+        elif triggered_component_id == 'tsne-plot': # TODO: BUG
 
             layout = fig['layout']
             

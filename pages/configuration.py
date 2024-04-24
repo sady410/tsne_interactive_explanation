@@ -81,10 +81,10 @@ def run_tsne(selected_datasets, perplexity, max_iter):
 
         if selected_dataset == 'iris':
             iris = datasets.load_iris()
-            return iris.data, iris.target, iris.feature_names
+            return iris.data, iris.target, iris.feature_names, 3
         elif selected_dataset == 'diabetes': 
             diabetes = datasets.load_diabetes()
-            return diabetes.data, diabetes.target, diabetes.feature_names
+            return diabetes.data, diabetes.target, diabetes.feature_names, 1
         elif selected_dataset == 'countries':
             countries = pd.read_csv("datasets/country_dataset_with_names.csv", index_col = 0)
             X = countries.to_numpy()[0:].astype(np.float64)
@@ -92,25 +92,25 @@ def run_tsne(selected_datasets, perplexity, max_iter):
             X = scaler.fit_transform(X)
             countries_names = countries.index.to_numpy()
             feature_names = countries.columns.tolist()
-            return X, countries_names, feature_names
+            return X, countries_names, feature_names, 1
         elif selected_dataset == 'zoo':
             zoo = pd.read_csv("datasets/zoo.csv", index_col = 0)
             del zoo['class_type']
             X = zoo.to_numpy()[0:].astype(np.float64)
             animal_names = zoo.index.to_numpy()
             feature_names = zoo.columns.tolist()
-            return X, animal_names, feature_names
+            return X, animal_names, feature_names, 1
 
     if len(selected_datasets) == 0:
         return json.dumps({})
 
-    X, targets, feature_names = prepare_data(selected_datasets)
+    X, targets, feature_names, nb_classes = prepare_data(selected_datasets)
     
     Y, P, Q, sigma = compute_tsne(X, no_dims=2, perplexity=perplexity, max_iter=max_iter)
 
     gradients = compute_all_gradients(X, Y, P, Q, sigma)
 
-    return json.dumps({'X': X.tolist(), 'labels': targets.tolist(), 'feature_names': feature_names,
+    return json.dumps({'nb_classes': nb_classes, 'X': X.tolist(), 'labels': targets.tolist(), 'feature_names': feature_names,
                        'embedding': Y.tolist(), 'gradients': gradients.tolist(), 'dataset_name': selected_datasets})
 
 @dash.callback(
