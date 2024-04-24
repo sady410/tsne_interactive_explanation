@@ -129,14 +129,14 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                         'y0': y0,
                         'y1': y1,
                         'line': {
-                            'color': Color.danger.value,
+                            'color': Color.success.value,
                             'width': 2
                         },
                         'opacity': 0.8
                     })
                 # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
                 fig['layout']["shapes"] = shapes
-                fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id])))
+                fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
 
                 return fig
         elif triggered_component_id == 'tsne-plot': # TODO: BUG
@@ -173,7 +173,7 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                         'y0': y0,
                         'y1': y1,
                         'line': {
-                            'color': Color.danger.value,
+                            'color': Color.success.value,
                             'width': 2
                         },
                         'opacity': 0.8
@@ -304,10 +304,16 @@ def update_feature_distribution_plot(tsne_data, selected_data, hover_data, click
         colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
         line_colors = [Color.primaryBorderSubtle.value for i in range(len(fig.data[0]['x']))]
         if triggered_event == 'hoverData':
+            
             colors = fig['data'][0]['marker']['color']
+            if Color.primary.value in colors:
+                line_colors[colors.index(Color.primary.value)] = Color.primary.value
             if hover_data is not None:
                 feature_id = hover_data['points'][0]['pointIndex'] 
                 line_colors[feature_id] = Color.primary.value
+
+                    
+
 
         elif triggered_event == 'clickData':
             feature_id = click_data['points'][0]['pointIndex'] 

@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
+
 from css_colors_exposed import Color
 
 ################################
@@ -28,7 +29,7 @@ def create_average_feature_distribution_plot(features, X, idx):
     )
     fig.update_traces(marker={
         "color": [Color.primaryBorderSubtle.value for _ in range(len(features))],
-        "line": dict(width=3, color=Color.primaryBorderSubtle.value),
+        "line": dict(width=3, color=[Color.primaryBorderSubtle.value for _ in range(len(features))]),
     })
 
     return fig
@@ -68,8 +69,8 @@ def create_plot_tsne_embedding(X, Y, targets, dataset_name):
         showlegend=False,
         yaxis_title=None,
         xaxis_title=None,
-        xaxis=dict(showticklabels=False, mirror=True, ticks=""),
-        yaxis=dict(showticklabels=False, mirror=True, ticks=""),
+        xaxis_visible=False, 
+        yaxis_visible=False,
         margin=dict(l=0.5, r=0.5, t=0.5, b=0.5),
         template="simple_white",
         plot_bgcolor=Color.transparent.value,
