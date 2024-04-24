@@ -80,7 +80,7 @@ def layout():
 def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, explanation_figure): # TODO: CAN'T HOVER ON SELECTED DATA
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    
+
     tsne_data = json.loads(tsne_data)
     Y = np.array(tsne_data.get('embedding'))
     X = np.array(tsne_data.get('X'))
@@ -95,11 +95,14 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
         fig = go.Figure(tsne_figure)
         shapes = []
         nb_classes = tsne_data.get('nb_classes')
+
+        if len(fig["data"]) == nb_classes+1:
+            new_data = list(fig["data"])
+            new_data.pop(nb_classes) # remove contour plot
+            fig["data"] = new_data
+
         if triggered_component_id == 'explanation-barplot':
-            if len(fig["data"]) == nb_classes+1: # TODO: MAKE THIS GENERIC
-                new_data = list(fig["data"])
-                new_data.pop(nb_classes) # remove contour plot
-                fig["data"] = new_data
+           
             if explanation_figure['data'][0]['marker']['color'][click_data['points'][0]['pointIndex']] == Color.primary.value: 
                 fig['layout']['shapes'] = shapes
                 return fig
@@ -134,33 +137,34 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                         },
                         'opacity': 0.8
                     })
-                # TODO -> Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
+
                 fig['layout']["shapes"] = shapes
                 fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
 
                 return fig
-        elif triggered_component_id == 'tsne-plot': # TODO: BUG
-
-            layout = fig['layout']
+        elif triggered_component_id == 'tsne-plot':
             
             if Color.primary.value not in explanation_figure['data'][0]['marker']['color']: # no selected feature
-                layout['shapes'] = shapes
-                fig['layout'] = layout
+                fig['layout']['shapes'] = shapes
                 return fig
             else:
+                feature_id = explanation_figure['data'][0]['marker']['color'].index(Color.primary.value)
                 if selected_data is None:
-                    selected_points = [i for i in range(len(Y))]
-                elif selected_data['points'] == []:
-                    layout['shapes'] = shapes
-                    fig['layout'] = layout
+                    fig['layout']['shapes'] = shapes
+                    fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
                     return fig
+                if selected_data['points'] == []:
+                    if 'lassoPoints' in selected_data:
+                        fig['layout']['shapes'] = shapes
+                        fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
+                        return fig
+                    else:
+                        selected_points = [i for i in range(len(Y))]
                 else:
                     selected_points = [selected_data['points'][i]['customdata'][0] for i in range(len(selected_data['points']))]
-
+                
                 coordinates = Y[selected_points]
                 gradients = np.array(tsne_data.get('gradients'))
-
-                feature_id = explanation_figure['data'][0]['marker']['color'].index(Color.primary.value)
 
                 for i in range(coordinates.shape[0]):
                     point_id = selected_points[i]
@@ -178,10 +182,10 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                         },
                         'opacity': 0.8
                     })
-                # TODO: Can you update the exaplanation graph to make the selected feature use Color.primary.value? @sady410
 
-                layout['shapes'] = shapes
-                fig['layout'] = layout
+                fig['layout']["shapes"] = shapes
+                fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
+
                 return fig
         else:
             return fig
