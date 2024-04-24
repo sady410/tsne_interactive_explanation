@@ -149,41 +149,39 @@ def update_scatter_plot(tsne_data, click_data, selected_data, tsne_figure, expla
                 return fig
             else:
                 feature_id = explanation_figure['data'][0]['marker']['color'].index(Color.primary.value)
-                if selected_data is None:
-                    fig['layout']['shapes'] = shapes
-                    fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
-                    return fig
-                if selected_data['points'] == []:
-                    if 'lassoPoints' in selected_data:
-                        fig['layout']['shapes'] = shapes
-                        fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
-                        return fig
+
+                if selected_data is not None:
+                    if selected_data['points'] == []:
+                        if 'lassoPoints' in selected_data:
+                            fig['layout']['shapes'] = shapes
+                            fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
+                            return fig
+                        else:
+                            selected_points = [i for i in range(len(Y))]
                     else:
-                        selected_points = [i for i in range(len(Y))]
-                else:
-                    selected_points = [selected_data['points'][i]['customdata'][0] for i in range(len(selected_data['points']))]
-                
-                coordinates = Y[selected_points]
-                gradients = np.array(tsne_data.get('gradients'))
+                        selected_points = [selected_data['points'][i]['customdata'][0] for i in range(len(selected_data['points']))]
+                    
+                    coordinates = Y[selected_points]
+                    gradients = np.array(tsne_data.get('gradients'))
 
-                for i in range(coordinates.shape[0]):
-                    point_id = selected_points[i]
-                    x0, y0 = coordinates[i]
-                    x1, y1 = coordinates[i] + gradients[point_id, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
-                    shapes.append({
-                        'type': 'line',
-                        'x0': x0,
-                        'x1': x1,
-                        'y0': y0,
-                        'y1': y1,
-                        'line': {
-                            'color': Color.success.value,
-                            'width': 2
-                        },
-                        'opacity': 0.8
-                    })
+                    for i in range(coordinates.shape[0]):
+                        point_id = selected_points[i]
+                        x0, y0 = coordinates[i]
+                        x1, y1 = coordinates[i] + gradients[point_id, :, feature_id]*1 # TODO: DETERMINE SCALING FACTOR
+                        shapes.append({
+                            'type': 'line',
+                            'x0': x0,
+                            'x1': x1,
+                            'y0': y0,
+                            'y1': y1,
+                            'line': {
+                                'color': Color.success.value,
+                                'width': 2
+                            },
+                            'opacity': 0.8
+                        })
 
-                fig['layout']["shapes"] = shapes
+                    fig['layout']["shapes"] = shapes
                 fig.add_trace(go.Contour(x=Y[:,0],y=Y[:,1],z=np.array(X[:, feature_id]), hoverinfo='skip', colorscale='Pinkyl', line = dict(width = 0)))
 
                 return fig
