@@ -90,6 +90,10 @@ body {
   padding-bottom: 3vh;
 }
 
+#explanation-barplot .cursor-crosshair,#explanation-barplot g.point{
+  cursor: pointer !important;
+}
+
 .page-title {
   font-size: 2rem;
   font-weight: 200;
