@@ -15,7 +15,8 @@ from css_colors_exposed import Color
 def create_average_feature_distribution_plot(features, X, idx):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=np.mean(X[idx], axis=0), y=features,
-                  orientation="h", name="Combined Gradients", showlegend=False))
+                  orientation="h", name="Combined Gradients", showlegend=False,
+                  hovertemplate="%{label}<br><b>%{x}</b><extra></extra>"))
     
     fig.update_yaxes(showticklabels=False, showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
@@ -50,20 +51,20 @@ def create_plot_tsne_embedding(X, Y, targets, dataset_name):
     if dataset_name == "countries":
         df["Country"] = targets
         fig = px.scatter(df, x="Comp-1", y="Comp-2",
-                         hover_name="Country", hover_data=["Id"])
+                         hover_name="Country", hover_data={"Id": True, 'Comp-1':False, 'Comp-2':False})
     elif dataset_name == "diabetes":
         df["Disease Measure"] = targets
         fig = px.scatter(df, x="Comp-1", y="Comp-2",
-                         hover_name="Disease Measure", hover_data=["Id"])
+                         hover_name="Disease Measure", hover_data={"Id": True, 'Comp-1':False, 'Comp-2':False})
     elif dataset_name == "zoo":
         df["Animal"] = targets
         fig = px.scatter(df, x="Comp-1", y="Comp-2",
-                         hover_name="Animal", hover_data=["Id"])
+                         hover_name="Animal", hover_data={"Id": True, 'Comp-1':False, 'Comp-2':False})
     else:
         df["Class"] = np.array([str(i) for i in targets])
         df["Species"] = np.array([["Setosa", "Versicolor", "Virginica"][i] for i in targets])
         fig = px.scatter(df, x="Comp-1", y="Comp-2",
-                        color="Class", hover_name="Species", hover_data=["Id"])
+                        color="Class", hover_name="Species", hover_data={"Id": True, 'Comp-1':False, 'Comp-2':False})
     
     fig.update_layout(
         showlegend=False,
@@ -75,10 +76,6 @@ def create_plot_tsne_embedding(X, Y, targets, dataset_name):
         template="simple_white",
         plot_bgcolor=Color.transparent.value,
         paper_bgcolor=Color.transparent.value,
-        hoverlabel=dict(
-            bgcolor=Color.secondary.value,
-            font_size=16,     
-        ) 
     )
 
     fig.update_traces(marker={
@@ -87,7 +84,6 @@ def create_plot_tsne_embedding(X, Y, targets, dataset_name):
     })
 
     if dataset_name != "iris":
-        
         fig.update_traces(marker={
             "color": Color.primary.value
         })
@@ -113,7 +109,8 @@ def create_feature_importance_ranking_plot(gradients, features):
     fig = go.Figure()
 
     fig.add_trace(go.Bar(x=mean_norms, y=features, textposition="auto", text=features, 
-                  orientation="h", showlegend=False))
+                  orientation="h", showlegend=False, 
+                  hovertemplate="%{label}<br><b>%{x}</b><extra></extra>"))
 
     fig.update_yaxes(showticklabels=False, showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
@@ -139,7 +136,8 @@ def create_combined_gradients_plot(gradients, features, instance_idx):
     fig = go.Figure()
 
     fig.add_trace(go.Bar(x=combined_magnitude, y=features, textposition="auto", text=features, 
-                  orientation="h", name="Combined Gradients", showlegend=False))
+                  orientation="h", name="Combined Gradients", showlegend=False, 
+                  hovertemplate="%{label}<br><b>%{x}</b><extra></extra>"))
 
     fig.update_yaxes(showticklabels=False, showline=True, ticks="")
     fig.update_xaxes(ticks="outside", showline=True, showgrid=False)
