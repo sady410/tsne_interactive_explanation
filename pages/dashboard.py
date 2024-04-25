@@ -241,9 +241,10 @@ def update_overview_plot(overview_plot, relayout_data, tsne_plot):
     [Input('tsne-data', 'data'),
      Input('tsne-plot', 'selectedData'),
      Input('explanation-barplot', 'clickData'),
-     State('explanation-barplot', 'figure')]
+     State('explanation-barplot', 'figure'),
+     State('explanation-barplot-title', 'children'),]
 )
-def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure):
+def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure, title):
     ctx = dash.callback_context
     triggered_component_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -253,7 +254,8 @@ def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure):
     feature_names = gradients_data.get('feature_names')
     gradients = np.array(gradients)
     fig = figure
-    
+    title=title
+
     if triggered_component_id == 'tsne-plot':
         if selected_data is not None and selected_data['points'] != []:
             selected_indices = [point['customdata'][0]
@@ -278,7 +280,6 @@ def update_explanation_bar_plot(tsne_data, selected_data, click_data, figure):
             colors[feature_id] = Color.primary.value
         
         fig.update_traces(marker=dict(color = colors))
-        title = "Feature Importance for Selected Points"
     else:
         fig = create_feature_importance_ranking_plot(gradients, feature_names)
         title = "Global Feature Importance"
