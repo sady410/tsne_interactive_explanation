@@ -7,6 +7,14 @@ body {
   background-color: #fcfcfc;
 }
 
+.dash-debug-menu__outer {
+  visibility: hidden !important;
+}
+  
+.dash-debug-menu {
+  visibility: hidden !important;
+}
+
 .main-container {
   position: absolute;
   display: flex;

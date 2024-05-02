@@ -4,7 +4,7 @@ from dash import dcc, html
 
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
+server = app.server
 app.layout = html.Div([
     dcc.Location(id='url', refresh=True),
     dcc.Store(id='tsne-data', storage_type='session'),
