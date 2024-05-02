@@ -1,8 +1,6 @@
 import json
-from turtle import width
 
 import dash
-import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objects as go
 from dash import dcc, html
