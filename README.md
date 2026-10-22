@@ -51,7 +51,7 @@ This is experimental research software. Its dependencies and behavior may requir
 
 Sacha Corbugy, Thibaut Septon, Bruno Dumas, and Benoît Frénay. **Insight-SNE: Understanding t-SNE Embeddings through Interactive Explanation.** European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning (ESANN), 2024.
 
-**[Read the paper](https://doi.org/10.14428/esann/2024.es2024-190)** · **[University of Namur publication record and manuscript](https://researchportal.unamur.be/en/publications/insight-sne-understanding-t-sne-embeddings-through-interactive-ex/)**
+**[Read the paper](https://doi.org/10.14428/esann/2024.es2024-190)**
 
 ```bibtex
 @inproceedings{corbugy2024insightsne,
