@@ -14,7 +14,6 @@ Insight-SNE has since evolved into a C++/Qt desktop application integrating the 
 | --- | --- |
 | **This repository** | First Python/Dash interactive prototype associated with the ESANN 2024 publication. |
 | **[Insight-SNE website](https://insight-sne.netlify.app/)** | Current product, downloads, screenshots, and first-session instructions. |
-| **[Insight-SNE desktop repository](https://github.com/sady410/Insight-SNE-desktop)** | Source repository for the current C++/Qt desktop application. |
 | **[Original Qt application](https://github.com/sady410/Insight-SNE)** | Earlier Qt version using the Python explanation implementation. |
 | **[Python research implementation](https://github.com/sady410/tsne_gradients_explanation)** | Basic numerical implementation and research examples for gradient-based t-SNE explanations. |
 | **[C++ implementation](https://github.com/sady410/tsne-explanations-cpp)** | Standalone C++17 implementation of exact t-SNE and the explanation method. |
